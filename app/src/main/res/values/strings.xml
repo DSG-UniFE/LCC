@@ -1,0 +1,35 @@
+<resources>
+
+    <string name="app_name">LCC</string>
+    <string name="a_mode">Automatic mode</string>
+    <string name="m_mode">Manual mode</string>
+    <string name="wifi">WiFi</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="rs">RS</string>
+    <string name="hc">HC</string>
+    <string name="rw">RW</string>
+    <string name="rs_default_value">450</string>
+    <string name="hc_default_value">150</string>
+    <string name="rw_default_value">30</string>
+    <string name="wifi_client_hotspot">Hotspot initial role</string>
+    <string name="wifi_active">Activate</string>
+    <string name="bluetooth_client_hotspot">Hotspot initial role</string>
+    <string name="bluetooth_active">Activate</string>
+    <string name="active_hotspot_wifi">Activate hotspot WiFi</string>
+    <string name="active_hotspot_bluetooth">Activate hotspot bluetooth</string>
+    <string name="connect_client_wifi">Connect client WiFi</string>
+    <string name="connect_client_bluetooth">Connect client bluetooth</string>
+    <string name="aggressiveness">Aggressiveness</string>
+    <string name="low">Low</string>
+    <string name="default_values">Default values</string>
+    <string-array name="aggressiveness_array">
+        <item>Lazy</item>
+        <item>Regular</item>
+        <item>Hectic</item>
+        <item>Custom</item>
+    </string-array>
+    <string name="lcc_notification_id">3</string>
+    <string name="wifi_notification_id">4</string>
+    <string name="bluetooth_notification_id">5</string>
+
+</resources>

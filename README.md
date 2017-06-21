@@ -1,0 +1,1 @@
+# Link Connectivity Component (LCC)

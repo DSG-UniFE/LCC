@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:scrollbars="vertical">
+
+        <TextView
+            android:id="@+id/titleModeAuto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/a_mode"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textStyle="bold" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/titleAggressiveness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.4"
+                android:text="@string/aggressiveness"
+                android:textAlignment="viewStart"
+                android:textAppearance="@android:style/TextAppearance" />
+
+            <Spinner
+                android:id="@+id/aggressiveness_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.6"
+                android:entries="@array/aggressiveness_array" />
+
+        </TableRow>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/changeRolePeriodTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/rs"
+                    android:textAppearance="@android:style/TextAppearance.Small" />
+
+                <TextView
+                    android:id="@+id/changeHotspotPeriodTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/hc"
+                    android:textAppearance="@android:style/TextAppearance.Small" />
+
+                <TextView
+                    android:id="@+id/maxTimewaitToBeHotspotTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/rw"
+                    android:textAppearance="@android:style/TextAppearance.Small" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/changeRolePeriodValue"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:text="@string/rs_default_value"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:id="@+id/changeHotspotPeriodValue"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:text="@string/hc_default_value"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:id="@+id/maxTimewaitToBeHotspotValue"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:text="@string/rw_default_value"
+                    android:textAlignment="center" />
+
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/titleWifiHotspot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/wifi"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/wifiHotspotRole"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wifi_client_hotspot"
+            android:textAppearance="@android:style/TextAppearance" />
+
+        <CheckBox
+            android:id="@+id/lccThread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wifi_active"
+            android:textAppearance="@android:style/TextAppearance" />
+
+        <TextView
+            android:id="@+id/titleBluetoothHotspot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/bluetooth"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/bluetoothHotspotRole"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bluetooth_client_hotspot"
+            android:textAppearance="@android:style/TextAppearance" />
+
+        <CheckBox
+            android:id="@+id/lccThreadBluetooth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bluetooth_active"
+            android:textAppearance="@android:style/TextAppearance" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/titleManualMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/m_mode"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textStyle="bold" />
+
+
+        <CheckBox
+            android:id="@+id/hotspotWifiActive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/active_hotspot_wifi"
+            android:textAppearance="@android:style/TextAppearance" />
+
+        <CheckBox
+            android:id="@+id/hotspotBluetoothActive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/active_hotspot_bluetooth"
+            android:textAppearance="@android:style/TextAppearance" />
+
+
+        <CheckBox
+            android:id="@+id/hotspotWifiConnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/connect_client_wifi"
+            android:textAppearance="@android:style/TextAppearance" />
+
+        <CheckBox
+            android:id="@+id/hotspotBluetoothConnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/connect_client_bluetooth"
+            android:textAppearance="@android:style/TextAppearance" />
+
+    </LinearLayout>
+
+</ScrollView>
