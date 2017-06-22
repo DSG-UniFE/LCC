@@ -21,7 +21,7 @@ import it.unife.dsg.lcc.util.Utils;
 */
 public class LCC extends Thread {
 	
-//	private static LCC wifiOpp = null;
+//	private static LCC lcc = null;
 	private boolean active = true;
 	private String networkSSID, prefixNetworkSSID;
 	private Context context;
@@ -76,21 +76,21 @@ public class LCC extends Thread {
 	//getInstance
 //	public static synchronized LCC getInstance(boolean forceStart, Context context,
 //			LCCRole initialRole, HotspotType hotspotType) {
-//		if (forceStart && wifiOpp == null) {
-//			wifiOpp = new LCC(context, initialRole, hotspotType);
+//		if (forceStart && lcc == null) {
+//			lcc = new LCC(context, initialRole, hotspotType);
 //			
-//			wifiOpp.start();
+//			lcc.start();
 //				
 //			System.out.println("LCC " + connection + ": ENABLED");
 //		}
 //		else
 //		{
-//			wifiOpp.context = context;
-//			wifiOpp.role = initialRole;
-//			wifiOpp.hotspotType = hotspotType;
+//			lcc.context = context;
+//			lcc.role = initialRole;
+//			lcc.hotspotType = hotspotType;
 //		}
 //		
-//		return wifiOpp;
+//		return lcc;
 //	}
 	
 	public LCC(Context context, LCCRole role, HotspotType hotspotType, int rs, int hc,
@@ -124,7 +124,7 @@ public class LCC extends Thread {
 			Utils.appendLog("LCC " + hotspotType + " START: initial role " + role.toString());
 
             showNotification();
-            sendIntentBroadcast(Constants.MESSAGE_WIFIOPP_ACTIVATE);
+            sendIntentBroadcast(Constants.MESSAGE_LCC_ACTIVATE);
 
 			//Set initial role
 			if(role == LCCRole.HOTSPOT)
@@ -194,7 +194,7 @@ public class LCC extends Thread {
 			Utils.appendLog("LCC " + hotspotType + ": FINISHED");
 		} catch (InterruptedException ie) {
 			System.out.println("LCC: InterruptedException");
-            sendIntentBroadcast(Constants.MESSAGE_WIFIOPP_DEACTIVATE);
+            sendIntentBroadcast(Constants.MESSAGE_LCC_DEACTIVATE);
 		} catch (Exception e) {
             System.out.println("ERROR: Exceptions");
 			e.printStackTrace();
@@ -512,7 +512,7 @@ public class LCC extends Thread {
 
 
     private void sendIntentBroadcast(int message_id) {
-        Intent intent = new Intent(Constants.WIFIOPP_INTENT_ACTION);
+        Intent intent = new Intent(Constants.LCC_INTENT_ACTION);
 //        intent.setAction(Constants.WIFIOPP_INTENT_ACTION);
         intent.putExtra("data", message_id);
         context.sendBroadcast(intent);

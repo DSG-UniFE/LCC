@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
 
 	private Handler uiHandler;
 
-    CheckBox wifiOppThread, wifiHotspotRule;
+    CheckBox LCCThread, wifiHotspotRule;
     CheckBox lccThreadBluetooth, bluetoothHotspotRole;
     CheckBox wifiHotspotActive, bluetoothHotspotActive;
     CheckBox wifiHotspotConnect, bluetoothHotspotConnect;
@@ -309,8 +309,8 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                 //Hotspot Wifi
                 wifiHotspotRule = (CheckBox)findViewById(R.id.wifiHotspotRole);
                 wifiHotspotRule.setOnCheckedChangeListener(this);
-                wifiOppThread = (CheckBox)findViewById(R.id.lccThread);
-                wifiOppThread.setOnCheckedChangeListener(this);
+                LCCThread = (CheckBox)findViewById(R.id.lccThread);
+                LCCThread.setOnCheckedChangeListener(this);
                 //Hotspot Bluetooth
                 bluetoothHotspotRole = (CheckBox)findViewById(R.id.bluetoothHotspotRole);
                 bluetoothHotspotRole.setOnCheckedChangeListener(this);
