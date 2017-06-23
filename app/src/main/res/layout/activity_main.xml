@@ -38,6 +38,7 @@
                 android:layout_weight="0.4"
                 android:text="@string/aggressiveness"
                 android:textAlignment="viewStart"
+                android:layout_gravity="start"
                 android:textAppearance="@android:style/TextAppearance" />
 
             <Spinner
@@ -133,7 +134,7 @@
         </TableLayout>
 
         <TextView
-            android:id="@+id/titleWifiHotspot"
+            android:id="@+id/titleWifi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -143,21 +144,21 @@
             android:textStyle="bold" />
 
         <CheckBox
-            android:id="@+id/wifiHotspotRole"
+            android:id="@+id/aWifiHotspot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/wifi_client_hotspot"
             android:textAppearance="@android:style/TextAppearance" />
 
         <CheckBox
-            android:id="@+id/lccThread"
+            android:id="@+id/aWifi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/wifi_active"
             android:textAppearance="@android:style/TextAppearance" />
 
         <TextView
-            android:id="@+id/titleBluetoothHotspot"
+            android:id="@+id/titleBluetooth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -167,14 +168,14 @@
             android:textStyle="bold" />
 
         <CheckBox
-            android:id="@+id/bluetoothHotspotRole"
+            android:id="@+id/aBluetoothHotspot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/bluetooth_client_hotspot"
             android:textAppearance="@android:style/TextAppearance" />
 
         <CheckBox
-            android:id="@+id/lccThreadBluetooth"
+            android:id="@+id/aBluetooth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/bluetooth_active"
@@ -199,7 +200,7 @@
 
 
         <CheckBox
-            android:id="@+id/hotspotWifiActive"
+            android:id="@+id/mHotspotWifi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -207,7 +208,7 @@
             android:textAppearance="@android:style/TextAppearance" />
 
         <CheckBox
-            android:id="@+id/hotspotBluetoothActive"
+            android:id="@+id/mHotspotBluetooth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/active_hotspot_bluetooth"
@@ -215,14 +216,14 @@
 
 
         <CheckBox
-            android:id="@+id/hotspotWifiConnect"
+            android:id="@+id/mWifi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/connect_client_wifi"
             android:textAppearance="@android:style/TextAppearance" />
 
         <CheckBox
-            android:id="@+id/hotspotBluetoothConnect"
+            android:id="@+id/mBluetooth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/connect_client_bluetooth"
