@@ -27,7 +27,7 @@ public class WifiAccessManager {
         try {
             WifiManager mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             
-            // TURN OFF YOUR WIFI BEFORE ENABLE HOTSPOT
+            // TURN OFF WIFI BEFORE ENABLE HOTSPOT
             if (enabled) {
                 mWifiManager.setWifiEnabled(false);
             }
@@ -51,11 +51,9 @@ public class WifiAccessManager {
             if (mWifiManager == null) {
                 // Device does not support Wi-Fi
             	System.out.println("WifiAccessManager:  Oop! Your device does not support Wi-Fi");
-            }
-            else 
-            {
+            } else {
 //            	if (connect) {
-            		if (!mWifiManager.isWifiEnabled()) {
+					if (!mWifiManager.isWifiEnabled()) {
             			// To turn on Wi-Fi
             			Method method = mWifiManager.getClass().getMethod("isWifiApEnabled");
             			boolean wifiApEnabled = Boolean
@@ -64,64 +62,88 @@ public class WifiAccessManager {
             				setWifiApState(context, networkSSID, false);
 
             			mWifiManager.setWifiEnabled(true);
-            			mWifiManager.startScan();
+//            			mWifiManager.startScan();
             			//Thread.sleep(2500);
             		}
+                    mWifiManager.startScan();
+                    Thread.sleep(3000);
 
             		List<ScanResult> wifiScanResultList = mWifiManager.getScanResults();
 
-            		 if(wifiScanResultList != null) {
-            		     //Filter, take only ssid which starts with "networkSSID"
-            			 ArrayList<ScanResult> wifiFilterList = new ArrayList<ScanResult>();
-            			 for (int i = 0; i < wifiScanResultList.size(); i++) {
-            				 ScanResult accessPoint = wifiScanResultList.get(i);
-            				 String currentSSID = accessPoint.SSID;
 
-            				 if(currentSSID != null && currentSSID.startsWith("\"" +networkSSID) &&
-									 !currentSSID.equals(excludeSSID)) {
-            					 wifiFilterList.add(accessPoint);
-            				 }
-            			 }
+                    // TEST
+                    System.out.println("WifiAccessManager: wifiScanResultList size " + wifiScanResultList.size());
+                    if(wifiScanResultList.size() > 0) {
+                        for (int i = 0; i < wifiScanResultList.size(); i++) {
+                            ScanResult accessPoint = wifiScanResultList.get(i);
+                            String currentSSID = accessPoint.SSID;
+                            System.out.println("WifiAccessManager, network name: " + currentSSID);
+                        }
+                    } else {
+                        System.out.println("WifiAccessManager: not found networks");
+                    }
 
-            			 int size = wifiFilterList.size();
-            			 if (size > 0) {
-            				  //Select new access point random
 
-            				  int n = Utils.nextRandomInt(size);
-            			      ScanResult newAccessPoint = wifiFilterList.get(n);
+					if(wifiScanResultList.size() > 0) {
+						//Filter, take only ssid which starts with "networkSSID"
+						ArrayList<ScanResult> wifiFilterList = new ArrayList<ScanResult>();
+            			for (int i = 0; i < wifiScanResultList.size(); i++) {
+							ScanResult accessPoint = wifiScanResultList.get(i);
+							String currentSSID = accessPoint.SSID;
 
-//            			      for (i = 0; i < wifiScanResultList.size(); i++) {
-//            				       ScanResult accessPoint = wifiScanResultList.get(i);
-//            				       String currentSSID = accessPoint.SSID;
+            				if(currentSSID != null && currentSSID.startsWith("\"" + networkSSID) &&
+									!currentSSID.equals(excludeSSID)) {
+            					wifiFilterList.add(accessPoint);
+							}
+						}
+
+
+                        // TEST
+                        if(wifiFilterList.size() > 0) {
+                            for (ScanResult wifiFilter : wifiFilterList)
+                                System.out.println("WifiAccessManager, network name: " + wifiFilter.SSID);
+                        } else {
+                            System.out.println("WifiAccessManager: not found networks with filters");
+                        }
+
+
+						int size = wifiFilterList.size();
+						if (size > 0) {
+							//Select new access point random
+							int n = Utils.nextRandomInt(size);
+							ScanResult newAccessPoint = wifiFilterList.get(n);
+
+//            			    for (i = 0; i < wifiScanResultList.size(); i++) {
+//            				    ScanResult accessPoint = wifiScanResultList.get(i);
+//            				    String currentSSID = accessPoint.SSID;
 //                         
-//            				  if(currentSSID != null && currentSSID.startsWith("\"" +networkSSID) && !currentSSID.equals(excludeSSID))
-//            				  {
- 								 WifiConfiguration conf = getWifiApConfiguration(newAccessPoint.SSID);
-            					 int networkId = mWifiManager.getConnectionInfo().getNetworkId();
-            					 mWifiManager.removeNetwork(networkId);
-            					 mWifiManager.saveConfiguration();
+//            				if(currentSSID != null && currentSSID.startsWith("\"" +networkSSID) && !currentSSID.equals(excludeSSID)) {
+                                WifiConfiguration conf = getWifiApConfiguration(newAccessPoint.SSID);
+            					int networkId = mWifiManager.getConnectionInfo().getNetworkId();
+            					mWifiManager.removeNetwork(networkId);
+            					mWifiManager.saveConfiguration();
 
-            					 int netId = mWifiManager.addNetwork(conf);
-//                        	     mWifiManager.updateNetwork(conf);
-//                        		 mWifiManager.saveConfiguration();
+                                int netId = mWifiManager.addNetwork(conf);
+//                        	    mWifiManager.updateNetwork(conf);
+//                        		mWifiManager.saveConfiguration();
 
-            					 boolean isDisconnected = mWifiManager.disconnect();
-            					 System.out.print("WifiAccessManager isDisconnected: " + isDisconnected);
+            					boolean isDisconnected = mWifiManager.disconnect();
+            					System.out.println("WifiAccessManager isDisconnected: " + isDisconnected);
 
-            					 boolean isEnabled = mWifiManager.enableNetwork(netId, true);
-            					 System.out.print("WifiAccessManager isEnabled: " + isEnabled);
+               					boolean isEnabled = mWifiManager.enableNetwork(netId, true);
+            					System.out.println("WifiAccessManager isEnabled: " + isEnabled);
 
-            					 boolean isReconnected = mWifiManager.reconnect();
-            					 System.out.print("WifiAccessManager isReconnected: " + isReconnected);
+            					boolean isReconnected = mWifiManager.reconnect();
+            					System.out.println("WifiAccessManager isReconnected: " + isReconnected);
 
-            					 if(isReconnected) {
-            						 //mWifiManager.saveConfiguration();
-            						 result = newAccessPoint;
-//            						 break;
-            					 }
-//            				 }
-            			 }
-            		 }
+            					if(isReconnected) {
+            					    //mWifiManager.saveConfiguration();
+            						result = newAccessPoint;
+//            						break;
+            					}
+//            				}
+                        }
+                    }
                 }
 //            	}
 //                else
@@ -141,13 +163,13 @@ public class WifiAccessManager {
 //            	for( WifiConfiguration i : list ) {
 //            		if(i.SSID != null && i.SSID.contains("\"" + networkSSID + "\"")) {
 //            			boolean isDisconnected = mWifiManager.disconnect();
-//            			System.out.print("WifiAccessManager isDisconnected : " + isDisconnected);
+//            			System.out.println("WifiAccessManager isDisconnected : " + isDisconnected);
 //            			
 //            			boolean isEnabled = mWifiManager.enableNetwork(i.networkId, true);
-//            			System.out.print("WifiAccessManager isEnabled : " + isEnabled);
+//            			System.out.println("WifiAccessManager isEnabled : " + isEnabled);
 //            			
 //            			boolean isReconnected = mWifiManager.reconnect();  
-//                	    System.out.print("WifiAccessManager isReconnected : " + isReconnected);
+//                	    System.out.println("WifiAccessManager isReconnected : " + isReconnected);
 //                	    result = true;
 //                    break;
 //                }           
