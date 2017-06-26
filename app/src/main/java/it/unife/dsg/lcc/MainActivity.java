@@ -1,12 +1,15 @@
 package it.unife.dsg.lcc;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.os.Build;
@@ -16,6 +19,9 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +43,11 @@ import it.unife.dsg.lcc.util.Utils;
 
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -65,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
     private final int STATUS_REGULAR_VALUE = 4;
     private final int STATUS_HECTIC_VALUE = 5;
     private final int STATUS_ENABLE_EDIT_TEXT = 6;
+
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 135;
+
 
     /** Called when the activity is first created. */
     @Override
@@ -106,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                     roleWifi = LCCRole.CLIENT;
                 else
                     roleWifi = LCCRole.HOTSPOT;
+
                 break;
             case R.id.aWifi:
                 System.out.println("LCCActivity: onCheckedChanged = R.id.aWifi " + isChecked);
@@ -133,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                     roleBluetooth = LCCRole.CLIENT;
                 else
                     roleBluetooth = LCCRole.HOTSPOT;
+
                 break;
             case R.id.aBluetooth:
                 System.out.println("LCCActivity: onCheckedChanged = R.id.aBluetooth " + isChecked);
@@ -188,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                     if (bt == null)
                         bt = new BluetoothTethering(context);
 
-                    bt.setBluetoothTethering(true);
+                    bt.setBluetoothTethering(true, "");
                     boolean res = bt.isBluetoothTetheringEnabled();
                     bluetoothHotspotActive.setChecked(res);
                     if (res) {
@@ -513,7 +529,10 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
     protected void onStart() {
         System.out.println("MainActivity: onStart");
         super.onStart();
+
         writeSettingsPermission(this);
+        checkPermissions();
+
         if (!mBound) {
             // Bind to LocalService
             Intent intent = new Intent(this, LCCService.class);
@@ -609,7 +628,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         }
     };
 
-    public static void writeSettingsPermission(Activity context) {
+    private static void writeSettingsPermission(Activity context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.System.canWrite(context)) {
                 Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS);
@@ -617,6 +636,93 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
+        }
+
+    }
+
+    private void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            List<String> permissionsNeeded = new ArrayList<String>();
+
+            final List<String> permissionsList = new ArrayList<String>();
+            if (!addPermission(permissionsList, Manifest.permission.ACCESS_COARSE_LOCATION))
+                permissionsNeeded.add("GPS");
+            if (!addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Read external storage");
+            if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                permissionsNeeded.add("Write external storage");
+
+            if (permissionsList.size() > 0) {
+                if (permissionsNeeded.size() > 0) {
+                    // Need Rationale
+                    String message = "You need to grant access to " + permissionsNeeded.get(0);
+                    for (int i = 1; i < permissionsNeeded.size(); i++)
+                        message = message + ", " + permissionsNeeded.get(i);
+                    showMessageOKCancel(message,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                                            REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+                                }
+                            });
+                    return;
+                }
+                requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                        REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+                return;
+            }
+        }
+    }
+
+    private boolean addPermission(List<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+            // Check for Rationale Option
+            if (!shouldShowRequestPermissionRationale(permission))
+                return false;
+        }
+        return true;
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS:
+            {
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.ACCESS_COARSE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                // Check for ACCESS_COARSE_LOCATION
+                if (perms.get(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    // All Permissions Granted
+                    Toast.makeText(MainActivity.this, "All permissions is allowed", Toast.LENGTH_SHORT)
+                            .show();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(MainActivity.this, "Some permission/s is denied", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+            break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
