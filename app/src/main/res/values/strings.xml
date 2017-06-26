@@ -11,9 +11,9 @@
     <string name="rs_default_value">450</string>
     <string name="hc_default_value">150</string>
     <string name="rw_default_value">30</string>
-    <string name="wifi_client_hotspot">Hotspot initial role</string>
+    <string name="wifi_client_hotspot">Hotspot role</string>
     <string name="wifi_active">Activate</string>
-    <string name="bluetooth_client_hotspot">Hotspot initial role</string>
+    <string name="bluetooth_client_hotspot">Hotspot role</string>
     <string name="bluetooth_active">Activate</string>
     <string name="active_hotspot_wifi">Activate hotspot WiFi</string>
     <string name="active_hotspot_bluetooth">Activate hotspot bluetooth</string>
