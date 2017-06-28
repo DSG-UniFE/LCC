@@ -133,13 +133,6 @@
             </TableRow>
         </TableLayout>
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="@android:color/darker_gray"-->
-            <!--android:layout_marginTop="32dp"-->
-            <!--android:layout_marginBottom="16dp"/>-->
-
         <TextView
             android:id="@+id/titleWifi"
             android:layout_width="match_parent"
@@ -227,6 +220,44 @@
             android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
             android:text="@string/active"
             android:textAppearance="@android:style/TextAppearance" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/titleInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/info"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/networkSSID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/role"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/updated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 

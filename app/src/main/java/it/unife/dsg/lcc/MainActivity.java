@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.os.Build;
@@ -21,6 +22,10 @@ import android.os.Message;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +45,7 @@ import it.unife.dsg.lcc.util.Constants;
 import it.unife.dsg.lcc.util.Utils;
 
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -66,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
     Context context;
     String networkSSID, prefixNetworkSSID;
     LCCRole roleWifi, roleBluetooth;
+    TextView networkSSIDTextView, roleTextView, updatedTextView;
 
     private final int STATUS_READY_TO_START = 0;
     private final int STATUS_DEFAULT_VALUES = 2;
@@ -245,12 +252,23 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                 wifiSpinner = (Spinner) findViewById(R.id.wifi_spinner);
                 wifiSpinner.setOnItemSelectedListener(this);
                 wifiSpinner.setSelection(0);
+
                 //Hotspot Bluetooth
                 bluetoothThread = (CheckBox)findViewById(R.id.active_bluetooth);
                 bluetoothThread.setOnCheckedChangeListener(this);
                 bluetoothSpinner = (Spinner) findViewById(R.id.bluetooth_spinner);
                 bluetoothSpinner.setOnItemSelectedListener(this);
-                wifiSpinner.setSelection(0);
+                bluetoothSpinner.setSelection(0);
+
+                networkSSIDTextView = (TextView) findViewById(R.id.networkSSID);
+                Spanned text = fromHtml("<b>" + getString(R.string.network_ssid) + "</b> " + getString(R.string.none));
+                networkSSIDTextView.setText(text);
+                roleTextView = (TextView) findViewById(R.id.role);
+                text = fromHtml("<b>" + getString(R.string.role) + "</b> " + getString(R.string.none));
+                roleTextView.setText(text);
+                updatedTextView = (TextView) findViewById(R.id.updated);
+                text = fromHtml("<b>" + getString(R.string.updated) + "</b> " + getString(R.string.none));
+                updatedTextView.setText(text);
                 break;
 
             case STATUS_DEFAULT_VALUES:
@@ -337,24 +355,42 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         int bluetooth_role = 0;
         boolean wifi_thread = false;
         boolean bluetooth_thread = false;
+        String networkSSIDText = getString(R.string.none);
+        String roleText = getString(R.string.none);
+        String updatedText = getString(R.string.none);
 
         aggressiveness = settings.getInt("aggressiveness", aggressiveness);
 		rs = settings.getInt("rs", rs);
 		hc = settings.getInt("hc", hc);
 		maxtbh = settings.getInt("maxtbh", maxtbh);
+
         wifi_role = settings.getInt("wifi_role", wifi_role);
-        bluetooth_role = settings.getInt("bluetooth_role", bluetooth_role);
         wifi_thread = settings.getBoolean("wifi_thread", wifi_thread);
+
+        bluetooth_role = settings.getInt("bluetooth_role", bluetooth_role);
         bluetooth_thread = settings.getBoolean("bluetooth_thread", bluetooth_thread);
+
+        networkSSIDText = settings.getString("network_ssid", networkSSIDText);
+        roleText = settings.getString("role", roleText);
+        updatedText = settings.getString("updated", updatedText);
 
         ((Spinner) findViewById(R.id.aggressiveness_spinner)).setSelection(aggressiveness);
 		((EditText)findViewById(R.id.changeRolePeriodValue)).setText(String.valueOf(rs));
 		((EditText)findViewById(R.id.changeHotspotPeriodValue)).setText(String.valueOf(hc));
 		((EditText)findViewById(R.id.maxTimewaitToBeHotspotValue)).setText(String.valueOf(maxtbh));
+
         ((Spinner) findViewById(R.id.wifi_spinner)).setSelection(wifi_role);
         ((CheckBox)findViewById(R.id.active_wifi)).setChecked(wifi_thread);
+
         ((Spinner) findViewById(R.id.bluetooth_spinner)).setSelection(bluetooth_role);
         ((CheckBox)findViewById(R.id.active_bluetooth)).setChecked(bluetooth_thread);
+
+        Spanned text = fromHtml("<b>" + getString(R.string.network_ssid) + "</b> " + networkSSIDText);
+        networkSSIDTextView.setText(text);
+        text = fromHtml("<b>" + getString(R.string.role) + "</b> " + roleText);
+        roleTextView.setText(text);
+        text = fromHtml("<b>" + getString(R.string.updated) + "</b> " + updatedText);
+        updatedTextView.setText(text);
     }
 
 
@@ -370,20 +406,34 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
 		int rs = Integer.parseInt(((EditText)findViewById(R.id.changeRolePeriodValue)).getText().toString());
 		int hc = Integer.parseInt(((EditText)findViewById(R.id.changeHotspotPeriodValue)).getText().toString());
 		int maxtbh = Integer.parseInt(((EditText)findViewById(R.id.maxTimewaitToBeHotspotValue)).getText().toString());
-        int wifi_role = (int) ((Spinner) findViewById(R.id.wifi_spinner)).getSelectedItemId();
-        int bluetooth_role = (int) ((Spinner) findViewById(R.id.bluetooth_spinner)).getSelectedItemId();
 
+        int wifi_role = (int) ((Spinner) findViewById(R.id.wifi_spinner)).getSelectedItemId();
         boolean wifi_thread = ((CheckBox)findViewById(R.id.active_wifi)).isChecked();
+
+        int bluetooth_role = (int) ((Spinner) findViewById(R.id.bluetooth_spinner)).getSelectedItemId();
         boolean bluetooth_thread = ((CheckBox)findViewById(R.id.active_bluetooth)).isChecked();
+
+        String text = networkSSIDTextView.getText().toString().split(":", 2)[1].replaceAll("\\s+", "");
+        String networkSSIDText = text;
+        text = roleTextView.getText().toString().split(":", 2)[1].replaceAll("\\s+", "");
+        String roleText = text;
+        text = updatedTextView.getText().toString().split(":", 2)[1].replaceAll("\\s+", "");
+        String updatedText = text;
 
         editor.putInt("aggressiveness", aggressiveness);
         editor.putInt("rs", rs);
 		editor.putInt("hc", hc);
 		editor.putInt("maxtbh", maxtbh);
+
         editor.putInt("wifi_role", wifi_role);
-        editor.putInt("bluetooth_role", bluetooth_role);
         editor.putBoolean("wifi_thread", wifi_thread);
+
+        editor.putInt("bluetooth_role", bluetooth_role);
         editor.putBoolean("bluetooth_thread", bluetooth_thread);
+
+        editor.putString("network_ssid", networkSSIDText);
+        editor.putString("role", roleText);
+        editor.putString("updated", updatedText);
 
 		// Commit
 		editor.apply();
@@ -506,6 +556,17 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                 break;
             }
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String html){
+        Spanned result;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            result = Html.fromHtml(html);
+        }
+        return result;
     }
 
     /** Defines callbacks for service binding, passed to bindService() */
