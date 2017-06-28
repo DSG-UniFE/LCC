@@ -37,9 +37,17 @@ public class Utils {
 		Random random = Utils.getSecureRandom();
     	return random.nextInt(n);
     }
-	
-	 
-	 
+
+    public static short nextRandomShort(){
+        Random random = Utils.getSecureRandom();
+        return (short) random.nextInt(Short.MAX_VALUE + 1);
+    }
+
+    public static short nextRandomNonNegativeShort(){
+        Random random = Utils.getSecureRandom();
+        return (short) random.nextInt(1 << 15);
+    }
+
 	 public static void appendLog(String text)
 	 { 
 		File androidShareDirectory = new File(android.os.Environment.getExternalStorageDirectory() + "/wifiOpp");
