@@ -12,15 +12,19 @@
     <string name="hc_default_value">150</string>
     <string name="rw_default_value">30</string>
     <string name="active">Active</string>
+    <string name="info">Info</string>
     <string name="aggressiveness">Aggressiveness</string>
     <string name="default_values">Default values</string>
+    <string name="network_ssid">Network SSID:</string>
+    <string name="updated">Updated:</string>
+    <string name="role">Role:</string>
+    <string name="none">none</string>
     <string-array name="aggressiveness_array">
         <item>Lazy</item>
         <item>Regular</item>
         <item>Hectic</item>
         <item>Custom</item>
     </string-array>
-    <string name="role">Role</string>
     <string-array name="role_array">
         <item>Client</item>
         <item>Hotspot</item>
