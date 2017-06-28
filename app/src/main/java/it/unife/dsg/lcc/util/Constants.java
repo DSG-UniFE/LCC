@@ -25,5 +25,5 @@ public class Constants {
     public static final int WIFI_NOTIFICATION_ID = 4;
     public static final int BLUETOOTH_NOTIFICATION_ID = 5;
 
-    public static final String hotspotIdFilename = "hotspotIdFilename";
+    public static final String HOTSPOT_ID = "HOTSPOT_ID";
 }
