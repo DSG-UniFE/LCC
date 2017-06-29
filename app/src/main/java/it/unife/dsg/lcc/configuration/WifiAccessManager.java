@@ -1,15 +1,10 @@
 package it.unife.dsg.lcc.configuration;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -25,7 +20,7 @@ public class WifiAccessManager {
     public static boolean setWifiApState(Context context, String networkSSID, boolean enabled) {
 
         try {
-            WifiManager mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiManager mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             
             // TURN OFF WIFI BEFORE ENABLE HOTSPOT
             if (enabled) {
@@ -46,11 +41,11 @@ public class WifiAccessManager {
     {
     	ScanResult result = null;
     	try {
-            WifiManager mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiManager mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
     	
             if (mWifiManager == null) {
                 // Device does not support Wi-Fi
-            	System.out.println("WifiAccessManager:  Oop! Your device does not support Wi-Fi");
+            	System.out.println("WifiAccessManager:  Ops, your device does not support Wi-Fi");
             } else {
 //            	if (connect) {
 					if (!mWifiManager.isWifiEnabled()) {
@@ -70,22 +65,8 @@ public class WifiAccessManager {
 
             		List<ScanResult> wifiScanResultList = mWifiManager.getScanResults();
 
-
-                    // TEST
-                    System.out.println("WifiAccessManager: wifiScanResultList size " + wifiScanResultList.size());
-                    if(wifiScanResultList.size() > 0) {
-                        for (int i = 0; i < wifiScanResultList.size(); i++) {
-                            ScanResult accessPoint = wifiScanResultList.get(i);
-                            String currentSSID = accessPoint.SSID;
-                            System.out.println("WifiAccessManager, network name: " + currentSSID);
-                        }
-                    } else {
-                        System.out.println("WifiAccessManager: not found networks");
-                    }
-
-
 					if(wifiScanResultList.size() > 0) {
-						//Filter, take only ssid which starts with "networkSSID"
+						// Filter, take only ssid which starts with "networkSSID"
 						ArrayList<ScanResult> wifiFilterList = new ArrayList<ScanResult>();
             			for (int i = 0; i < wifiScanResultList.size(); i++) {
 							ScanResult accessPoint = wifiScanResultList.get(i);
@@ -103,7 +84,7 @@ public class WifiAccessManager {
                             for (ScanResult wifiFilter : wifiFilterList)
                                 System.out.println("WifiAccessManager, network name: " + wifiFilter.SSID);
                         } else {
-                            System.out.println("WifiAccessManager: not found networks with filters");
+                            System.out.println("WifiAccessManager: NOT found networks with filters");
                         }
 
 
@@ -211,27 +192,14 @@ public class WifiAccessManager {
 //    	return result;
 //    }
     
-    public static WifiConfiguration getWifiApConfiguration(String networkSSID) {
+    private static WifiConfiguration getWifiApConfiguration(String networkSSID) {
         WifiConfiguration conf = new WifiConfiguration();
         //String ssid = convertToQuotedString(networkSSID);
-        String ssid = "\"" + networkSSID + "\"";
-        conf.SSID = ssid;                    // Please note the quotes.
-        									 // String should contain
-        									 // ssid in quotes
+        // Please note the quotes. String should contain ssid in quotes
+        conf.SSID = "\"" + networkSSID + "\"";
+
         conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
         return conf;
     }
-    
-    public static String convertToQuotedString(String string) {
-        if (string.isEmpty()) {
-            return "";
-        }
-        
-        final int lastPos = string.length() - 1;
-        if(lastPos > 0 && (string.charAt(0) == '"' && string.charAt(lastPos) == '"')) {
-            return string;
-        }
-        
-        return "\"" + string + "\"";
-    }
+
 }
