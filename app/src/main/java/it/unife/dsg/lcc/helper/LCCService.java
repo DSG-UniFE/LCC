@@ -4,8 +4,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import it.unife.dsg.lcc.runtime.LCC;
 
@@ -93,10 +93,10 @@ public class LCCService extends Service {
     }
 
     public void startWifiThread(Context context, LCC.LCCRole role, int rs, int hc,
-                                int maxTimewaitToBecomeHotspot) {
+                                int maxTimewaitToBecomeHotspot, Handler uiHandler) {
         if (wifiThread == null) {
             wifiThread = new LCC(context, role, LCC.HotspotType.WIFI, rs, hc,
-                    maxTimewaitToBecomeHotspot);
+                    maxTimewaitToBecomeHotspot, uiHandler);
         }
     }
 
@@ -109,10 +109,10 @@ public class LCCService extends Service {
     }
 
     public void startBluetoothThread(Context context, LCC.LCCRole role, int rs, int hc,
-                                     int maxTimewaitToBecomeHotspot) {
+                                     int maxTimewaitToBecomeHotspot, Handler uiHandler) {
         if (bluetoothThread == null) {
             bluetoothThread = new LCC(context, role, LCC.HotspotType.BLUETOOTH, rs, hc,
-                    maxTimewaitToBecomeHotspot);
+                    maxTimewaitToBecomeHotspot, uiHandler);
         }
     }
 
