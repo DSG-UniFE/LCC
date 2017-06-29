@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
 import it.unife.dsg.lcc.util.Utils;
 import android.bluetooth.*;
 
@@ -15,25 +14,25 @@ import android.bluetooth.*;
 *
 * @author Stefano Lanzone
 */
+
 public class BluetoothTethering {
 
-	Object instance = null;
-	Method setTetheringOn = null;
-	Method isTetheringOn = null;
-	Method mBTPanConnect = null;
-	Method mBTDeviceConnState = null;
-	Constructor<?> ctor;
-	Object mutex = new Object();
-	BluetoothAdapter btadapter;
-	BTPanServiceListener serviceListener;
-	Context context;
+	private Object instance = null;
+    private Method setTetheringOn = null;
+    private Method isTetheringOn = null;
+    private Method mBTPanConnect = null;
+    private Method mBTDeviceConnState = null;
+    private final Object mutex = new Object();
+    private BluetoothAdapter btadapter;
+    private BTPanServiceListener serviceListener;
+    private Context context;
 	
 	public BluetoothTethering(Context context) {
 		String sClassName = "android.bluetooth.BluetoothPan";
         
 		try {
 			Class<?> classBluetoothPan = Class.forName(sClassName);
-	        ctor = classBluetoothPan.getDeclaredConstructor(Context.class, BluetoothProfile.ServiceListener.class);
+            Constructor<?> ctor = classBluetoothPan.getDeclaredConstructor(Context.class, BluetoothProfile.ServiceListener.class);
 	        ctor.setAccessible(true);
 
 	        Class[] paramSet = new Class[1];
@@ -51,8 +50,7 @@ public class BluetoothTethering {
 	            serviceListener = new BTPanServiceListener(context);
 				instance = ctor.newInstance(context, serviceListener);
 	        }
-	    } catch (ClassNotFoundException e) {
-	        e.printStackTrace();
+
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
@@ -111,7 +109,7 @@ public class BluetoothTethering {
         }
     }
 
-   public boolean setName(String name) {
+   private boolean setName(String name) {
        boolean result = false;
        try {
            if(btadapter != null) {
