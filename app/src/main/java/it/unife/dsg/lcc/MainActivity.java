@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                             e.printStackTrace();
                         }
                         break;
+
                     default:
                         HashMap<String,String> info = (HashMap<String, String>) msg.obj;
 
@@ -195,39 +196,16 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                 System.out.println("LCCActivity: onCheckedChanged = R.id.aWifi " + isChecked);
                 Utils.appendLog("LCCActivity: onCheckedChanged = R.id.aWifi " + isChecked);
 
-                if (mBound) {
-                    if (!mService.wifiThreadIsActive()) {
-                        //lcc = LCC.getInstance(true, context, roleWifi, HotspotType.WIFI);
-                        int rs = Integer.parseInt(((EditText) findViewById(R.id.changeRolePeriodValue)).getText().toString());
-                        int hc = Integer.parseInt(((EditText) findViewById(R.id.changeHotspotPeriodValue)).getText().toString());
-                        int maxtbh = Integer.parseInt(((EditText) findViewById(R.id.maxTimewaitToBeHotspotValue)).getText().toString());
-
-                        mService.startWifiThread(context, roleWifi, rs, hc, maxtbh, uiHandler);
-                    }
-                    if (!isChecked) {
-                        mService.stopWifiThread();
-                    }
-                }
+                updateWifiStatus(isChecked);
                 break;
 
             case R.id.active_bluetooth:
                 System.out.println("LCCActivity: onCheckedChanged = R.id.active_bluetooth " + isChecked);
                 Utils.appendLog("LCCActivity: onCheckedChanged = R.id.active_bluetooth " + isChecked);
 
-                if (mBound) {
-                    if (!mService.bluetoothThreadIsActive()) {
-                        //lccBt = LCC.getInstance(true, context, roleBluetooth, HotspotType.BLUETOOTH);
-                        int rs = Integer.parseInt(((EditText) findViewById(R.id.changeRolePeriodValue)).getText().toString());
-                        int hc = Integer.parseInt(((EditText) findViewById(R.id.changeHotspotPeriodValue)).getText().toString());
-                        int maxtbh = Integer.parseInt(((EditText) findViewById(R.id.maxTimewaitToBeHotspotValue)).getText().toString());
-
-                        mService.startBluetoothThread(context, roleBluetooth, rs, hc, maxtbh, uiHandler);
-                    }
-                    if (!isChecked) {
-                        mService.stopBluetoothThread();
-                    }
-                }
+                updateBluetoothStatus(isChecked);
                 break;
+
             default:
                 break;
         }
@@ -245,47 +223,95 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                     case 0:
                         updateUI(STATUS_LAZY_VALUE);
                         break;
+
                     case 1:
                         updateUI(STATUS_REGULAR_VALUE);
                         break;
+
                     case 2:
                         updateUI(STATUS_HECTIC_VALUE);
                         break;
+
                     case 3:
                         updateUI(STATUS_ENABLE_EDIT_TEXT);
                         break;
+
                     default:
                         break;
                 }
                 break;
 
             case R.id.wifi_spinner:
+                CheckBox wifiActivated = (CheckBox)findViewById(R.id.active_wifi);
                 switch (pos) {
                     case 0:
-                        roleWifi = LCCRole.CLIENT;
+                        if (roleWifi != LCCRole.CLIENT && wifiActivated.isChecked()) {
+                            mService.stopWifiThread();
+                            roleWifi = LCCRole.CLIENT;
+                            updateWifiStatus(wifiActivated.isChecked());
+                        } else {
+                            roleWifi = LCCRole.CLIENT;
+                        }
                         break;
+
                     case 1:
-                        roleWifi = LCCRole.HOTSPOT;
+                        if (roleWifi != LCCRole.HOTSPOT && wifiActivated.isChecked()) {
+                            mService.stopWifiThread();
+                            roleWifi = LCCRole.HOTSPOT;
+                            updateWifiStatus(wifiActivated.isChecked());
+                        } else {
+                            roleWifi = LCCRole.HOTSPOT;
+                        }
                         break;
+
                     case 2:
-                        roleWifi = LCCRole.CLIENT_HOTSPOT;
+                        if (roleWifi != LCCRole.CLIENT_HOTSPOT && wifiActivated.isChecked()) {
+                            mService.stopWifiThread();
+                            roleWifi = LCCRole.CLIENT_HOTSPOT;
+                            updateWifiStatus(wifiActivated.isChecked());
+                        } else {
+                            roleWifi = LCCRole.CLIENT_HOTSPOT;
+                        }
                         break;
+
                     default:
                         break;
                 }
                 break;
 
             case R.id.bluetooth_spinner:
+                CheckBox bluetoothActivated = (CheckBox)findViewById(R.id.active_bluetooth);
                 switch (pos) {
                     case 0:
-                        roleBluetooth = LCCRole.CLIENT;
+                        if (roleBluetooth != LCCRole.CLIENT && bluetoothActivated.isChecked()) {
+                            mService.stopWifiThread();
+                            roleBluetooth = LCCRole.CLIENT;
+                            updateWifiStatus(bluetoothActivated.isChecked());
+                        } else {
+                            roleBluetooth = LCCRole.CLIENT;
+                        }
                         break;
+
                     case 1:
-                        roleBluetooth = LCCRole.HOTSPOT;
+                        if (roleBluetooth != LCCRole.HOTSPOT && bluetoothActivated.isChecked()) {
+                            mService.stopWifiThread();
+                            roleBluetooth = LCCRole.HOTSPOT;
+                            updateWifiStatus(bluetoothActivated.isChecked());
+                        } else {
+                            roleBluetooth = LCCRole.HOTSPOT;
+                        }
                         break;
+
                     case 2:
-                        roleBluetooth = LCCRole.CLIENT_HOTSPOT;
+                        if (roleBluetooth != LCCRole.CLIENT_HOTSPOT && bluetoothActivated.isChecked()) {
+                            mService.stopWifiThread();
+                            roleBluetooth = LCCRole.CLIENT_HOTSPOT;
+                            updateWifiStatus(bluetoothActivated.isChecked());
+                        } else {
+                            roleBluetooth = LCCRole.CLIENT_HOTSPOT;
+                        }
                         break;
+
                     default:
                         break;
                 }
@@ -663,6 +689,38 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         if (!mService.wifiThreadIsActive() && !mService.bluetoothThreadIsActive()) {
             unbindService(mConnection);
             mBound = false;
+        }
+    }
+
+    private void updateWifiStatus(boolean isChecked) {
+        if (mBound) {
+            if (!mService.wifiThreadIsActive()) {
+                //lcc = LCC.getInstance(true, context, roleWifi, HotspotType.WIFI);
+                int rs = Integer.parseInt(((EditText) findViewById(R.id.changeRolePeriodValue)).getText().toString());
+                int hc = Integer.parseInt(((EditText) findViewById(R.id.changeHotspotPeriodValue)).getText().toString());
+                int maxtbh = Integer.parseInt(((EditText) findViewById(R.id.maxTimewaitToBeHotspotValue)).getText().toString());
+
+                mService.startWifiThread(context, roleWifi, rs, hc, maxtbh, uiHandler);
+            }
+            if (!isChecked) {
+                mService.stopWifiThread();
+            }
+        }
+    }
+
+    private void updateBluetoothStatus(boolean isChecked) {
+        if (mBound) {
+            if (!mService.bluetoothThreadIsActive()) {
+                //lccBt = LCC.getInstance(true, context, roleBluetooth, HotspotType.BLUETOOTH);
+                int rs = Integer.parseInt(((EditText) findViewById(R.id.changeRolePeriodValue)).getText().toString());
+                int hc = Integer.parseInt(((EditText) findViewById(R.id.changeHotspotPeriodValue)).getText().toString());
+                int maxtbh = Integer.parseInt(((EditText) findViewById(R.id.maxTimewaitToBeHotspotValue)).getText().toString());
+
+                mService.startBluetoothThread(context, roleBluetooth, rs, hc, maxtbh, uiHandler);
+            }
+            if (!isChecked) {
+                mService.stopBluetoothThread();
+            }
         }
     }
 
