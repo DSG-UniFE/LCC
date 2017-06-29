@@ -6,7 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -47,6 +49,11 @@ public class Utils {
         Random random = Utils.getSecureRandom();
         return (short) random.nextInt(1 << 15);
     }
+
+    public static String getDate() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ITALY);
+		return dateFormat.format(new Date());
+	}
 
 	 public static void appendLog(String text)
 	 { 
