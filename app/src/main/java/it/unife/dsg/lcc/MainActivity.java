@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +25,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -175,6 +179,8 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         };
 
 		updateUI(STATUS_READY_TO_START);
+
+        activeGPS();
 
         // hide soft keyboard at activity start-up
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -721,6 +727,38 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
             if (!isChecked) {
                 mService.stopBluetoothThread();
             }
+        }
+    }
+
+    private void activeGPS() {
+        try {
+            int locationMode = 0;
+            String locationProviders;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+                if (locationMode == Settings.Secure.LOCATION_MODE_OFF) {
+                    showMessageOKCancel("You have to enable GPS",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                }
+                            });
+                }
+
+            } else {
+                locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+                if (TextUtils.isEmpty(locationProviders)) {
+                    final Intent locationIntent = new Intent();
+                    locationIntent.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+                    locationIntent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+                    locationIntent.setData(Uri.parse("3"));
+                    sendBroadcast(locationIntent);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
