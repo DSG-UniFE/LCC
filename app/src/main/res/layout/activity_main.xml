@@ -239,21 +239,62 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/networkSSID"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:layout_marginTop="8dp" />
-
-        <TextView
-            android:id="@+id/role"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:layout_marginTop="8dp" />
-
-        <TextView
             android:id="@+id/updated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ems="10" />
+
+        <TextView
+            android:id="@+id/network_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ems="10" />
+
+        <TextView
+            android:id="@+id/infoWifi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/wifi"
+            android:textAppearance="@android:style/TextAppearance.Small"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/wifi_role"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/wifi_connect_to"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/infoBluetooth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/bluetooth"
+            android:textAppearance="@android:style/TextAppearance.Small"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/bluetooth_role"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/bluetooth_connect_to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
