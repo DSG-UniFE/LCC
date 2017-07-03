@@ -23,25 +23,26 @@ public class BluetoothTethering {
     private Method mBTPanConnect = null;
     private Method mBTDeviceConnState = null;
     private final Object mutex = new Object();
-    private BluetoothAdapter btadapter;
+    private BluetoothAdapter mBluetoothAdapter;
     private BTPanServiceListener serviceListener;
     private Context context;
 	
 	public BluetoothTethering(Context context) {
-		String sClassName = "android.bluetooth.BluetoothPan";
-        
+        System.out.println("BluetoothTethering: BluetoothTethering()");
+
 		try {
-			Class<?> classBluetoothPan = Class.forName(sClassName);
+			Class<?> classBluetoothPan = Class.forName("android.bluetooth.BluetoothPan");
             Constructor<?> ctor = classBluetoothPan.getDeclaredConstructor(Context.class, BluetoothProfile.ServiceListener.class);
 	        ctor.setAccessible(true);
 
+            // Set Tethering ON
 	        Class[] paramSet = new Class[1];
 	        paramSet[0] = boolean.class;
-	        Class<?> noparams[] = {};
 	        
 	        this.context = context;
-	        btadapter = getBTAdapter();
+	        mBluetoothAdapter = getBTAdapter();
 
+            Class<?> noparams[] = {};
 	        synchronized (mutex) {
 	            setTetheringOn = classBluetoothPan.getDeclaredMethod("setBluetoothTethering", paramSet);
 	            isTetheringOn = classBluetoothPan.getDeclaredMethod("isTetheringOn", noparams);
@@ -57,6 +58,7 @@ public class BluetoothTethering {
 	}
 
     private BluetoothAdapter getBTAdapter() {
+        System.out.println("BluetoothTethering: getBTAdapter()");
         if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1)
             return BluetoothAdapter.getDefaultAdapter();
         else {
@@ -67,10 +69,12 @@ public class BluetoothTethering {
 
     // Check whether Bluetooth tethering is enabled.
     public boolean isBluetoothTetheringEnabled() {
+        System.out.println("BluetoothTethering: isBluetoothTetheringEnabled()");
         try {
-            if(btadapter != null) {
-                Class<?> noparams[] = {};
-                return (Boolean) isTetheringOn.invoke(instance, (Object []) noparams);
+            if(mBluetoothAdapter != null) {
+//                Class<?> noparams[] = {};
+//                return (Boolean) isTetheringOn.invoke(instance, (Object []) noparams);
+                return (Boolean) isTetheringOn.invoke(instance, null);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,13 +84,19 @@ public class BluetoothTethering {
 
     // Set Bluetooth tethering enabled/disabled.
     public void setBluetoothTethering(boolean on, String networkSSID) {
+        System.out.println("BluetoothTethering: setBluetoothTethering()");
          try {
-            if(btadapter != null) {
-                if (on)
-                    setName(networkSSID);
-                //setBluetooth(on);
-                setTetheringOn.invoke(instance, on);
-            }
+             if (on) {
+                 setBluetooth(true);
+
+                 if (mBluetoothAdapter != null) {
+                     setName(networkSSID);
+                     // setBluetooth(on);
+                     // setTetheringOn.invoke(instance, on);
+                 }
+             } else {
+                 setTetheringOn.invoke(instance, false);
+             }
          } catch (Exception e) {
              e.printStackTrace();
          }
@@ -94,15 +104,18 @@ public class BluetoothTethering {
 
     // Set Bluetooth enabled/disabled.
     private void setBluetooth(boolean on) {
+        System.out.println("BluetoothTethering: setBluetooth()");
         try {
-            if(btadapter != null) {
+            if(mBluetoothAdapter != null) {
                 if(on) {
-                    if(!btadapter.isEnabled())
-                        btadapter.enable();
+                    if(!mBluetoothAdapter.isEnabled()) {
+                        mBluetoothAdapter.enable();
+                    }
                 } else {
-                    if(btadapter.isEnabled())
-                        btadapter.disable();
+                    if(mBluetoothAdapter.isEnabled())
+                        mBluetoothAdapter.disable();
                 }
+                Thread.sleep(1000);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,11 +123,23 @@ public class BluetoothTethering {
     }
 
    private boolean setName(String name) {
+       System.out.println("BluetoothTethering: setName()");
        boolean result = false;
        try {
-           if(btadapter != null) {
-               System.out.println("BluetoothTethering: changed name");
-               btadapter.setName(name);
+           if(mBluetoothAdapter != null) {
+               System.out.println("BluetoothTethering: name " + mBluetoothAdapter.getName() +
+                       ", address " + mBluetoothAdapter.getAddress());
+               if (!mBluetoothAdapter.getName().equals(name)) {
+                   if (mBluetoothAdapter.setName(name))
+                       System.out.println("BluetoothTethering: changed name");
+                   else
+                       System.out.println("BluetoothTethering: IMPOSSIBLE changed name");
+                   Thread.sleep(1000);
+                   System.out.println("BluetoothTethering: name " + mBluetoothAdapter.getName() +
+                           ", address " + mBluetoothAdapter.getAddress());
+               } else {
+                   System.out.println("BluetoothTethering: NOT changed name");
+               }
                result = true;
            }
        } catch (Exception e) {
@@ -123,20 +148,36 @@ public class BluetoothTethering {
        return result;
    }
 
+    public void restartBluetooth() {
+        System.out.println("BluetoothTethering: restartBluetooth()");
+        try {
+            if(mBluetoothAdapter != null) {
+                if(!mBluetoothAdapter.isEnabled()) {
+                    mBluetoothAdapter.disable();
+                    Thread.sleep(1000);
+                    mBluetoothAdapter.enable();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
    public BluetoothDevice startConnection(String networkSSID, String excludeDevice) {
+       System.out.println("BluetoothTethering: startConnection()");
+
        BluetoothDevice result = null;
        try {
            BluetoothProfile proxy = serviceListener.getBluetoothProfileProxy();
            setBluetooth(true);
 
-           if(btadapter != null && proxy != null) {
+           if(mBluetoothAdapter != null && proxy != null) {
                if(isBluetoothTetheringEnabled()) {
-                   setBluetoothTethering(false, "");
+                   setTetheringOn.invoke(instance, false);
                }
 
-               Set<BluetoothDevice> pairedDevices = btadapter.getBondedDevices();
+               Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
                int size = pairedDevices.size();
-
                // If there are paired devices
                if (size > 0) {
                    ArrayList<BluetoothDevice> rampDevices = new ArrayList<BluetoothDevice>();
@@ -157,7 +198,7 @@ public class BluetoothTethering {
                                if (!((Boolean) mBTPanConnect.invoke(proxy, device))) {
                                    System.out.println("BluetoothTethering: Unable to start connection");
                                } else {
-                                   System.out.println("BluetoothTethering: Start connection");
+                                   System.out.println("BluetoothTethering: Started connection");
                                    result = device;
                                }
                            }
@@ -176,6 +217,8 @@ public class BluetoothTethering {
    }
 
    public boolean isConnectToDevice(BluetoothDevice device) {
+       System.out.println("BluetoothTethering: isConnectToDevice()");
+
        boolean result = false;
        try {
            BluetoothProfile proxy = serviceListener.getBluetoothProfileProxy();
@@ -187,9 +230,10 @@ public class BluetoothTethering {
        } catch (Exception e) {
            e.printStackTrace();
        }
-   return result;
 
+       return result;
    }
+
 //       public boolean checkConnection(String deviceName)
 //       {
 //    	   boolean result = false;
@@ -197,9 +241,9 @@ public class BluetoothTethering {
 //    		   BluetoothProfile proxy = serviceListener.getBluetoothProfileProxy();
 //    		   setBluetooth(true);
 //    		   
-//    		   if(btadapter != null && proxy != null) {
+//    		   if(mBluetoothAdapter != null && proxy != null) {
 //    			  
-//    			   Set<BluetoothDevice> pairedDevices = btadapter.getBondedDevices();
+//    			   Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 //		        	// If there are paired devices
 //		        	if (pairedDevices.size() > 0) {
 //		        		for (BluetoothDevice device : pairedDevices) {
@@ -234,11 +278,10 @@ public class BluetoothTethering {
 	public class BTPanServiceListener implements BluetoothProfile.ServiceListener {
 
 	    private final Context context;
-	    private BluetoothProfile proxy;
+	    private BluetoothProfile proxy = null;
 	    
 	    public BTPanServiceListener(final Context context) {
 	        this.context = context;
-	        this.proxy = null;
 	    }
 	    
 	    public BluetoothProfile getBluetoothProfileProxy() {
@@ -251,57 +294,21 @@ public class BluetoothTethering {
             
 	        try {
 	            synchronized (mutex) {
-	            		setTetheringOn.invoke(instance, true);
-	            		Class<?> noparams[] = {};
-	            		if ((Boolean)isTetheringOn.invoke(instance, noparams)) {
-	                	
-	            			System.out.println("BluetoothTethering, onServiceConnected: BT Tethering is on");
-	            			//Toast.makeText(getApplicationContext(), "BT Tethering is on", Toast.LENGTH_LONG).show();
-	            		}
-	            		else {
-	            			System.out.println("BluetoothTethering, onServiceConnected: BT Tethering is off");
-	            			//Toast.makeText(getApplicationContext(), "BT Tethering is off", Toast.LENGTH_LONG).show();
-	            		}
-//	            	}
-//	            	else
-//	            	{
-//	                	if(btadapter != null) {
-////	    		        	setBluetooth(true);
-//	    		        	Set<BluetoothDevice> pairedDevices = btadapter.getBondedDevices();
-//	    		        	boolean isConnect = false;
-//	    		        	// If there are paired devices
-//	    		        	if (pairedDevices.size() > 0) {
-//	    		        	    // Loop through paired devices
-//	    		        	    for (BluetoothDevice device : pairedDevices) {
-//	    		        	        try{
-//	    		        	        	String name = device.getName();
-////	    		        	        	if(name.equals("Galaxy S5"))
-////	    		        	        	{	
-//	    		        	        		if(!((Boolean) mBTPanConnect.invoke(proxy, device))){
-//	    		        	                    //Log.e("MyApp", "Unable to start connection");
-//	    		        	        			System.out.println("BluetoothTethering: Unable to start connection");
-//	    		        	                }
-//	    		        	        		else
-//	    		        	        		{
-//	    		        	        			System.out.println("BluetoothTethering: Start connection");
-//	    		        	        			isConnect = true;
-//	    		        	        			break;
-//	    		        	        		}
-////	    		        	        	}	    		        	        
-//	    		        	        }
-//	    		        	        catch (Exception e) {
-//	    		        	            e.printStackTrace();
-//	    		        	        }
-//	    		        	    }
-//	    		        	}
-//	    		        }
-//	                }
+                    setBluetooth(true);
+                    setTetheringOn.invoke(instance, true);
+                    if ((Boolean)isTetheringOn.invoke(instance, null)) {
+                        System.out.println("BluetoothTethering, onServiceConnected: BT Tethering is on");
+//	            			Toast.makeText(getApplicationContext(), "BT Tethering is on", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        System.out.println("BluetoothTethering, onServiceConnected: BT Tethering is off");
+//	            			Toast.makeText(getApplicationContext(), "BT Tethering is off", Toast.LENGTH_LONG).show();
+                    }
+
 	            }
-	        }
-	        catch (InvocationTargetException e) {
+	        } catch (InvocationTargetException e) {
                 e.printStackTrace();
-	        }
-	        catch (IllegalAccessException e) {
+	        } catch (IllegalAccessException e) {
                 e.printStackTrace();
 	        }
 	    }
@@ -313,13 +320,12 @@ public class BluetoothTethering {
 //	            	if(!connectToHotspot) {
 	            		setTetheringOn.invoke(instance, false);
 	            		if ((Boolean)isTetheringOn.invoke(instance, null)) {
-	                	
 	            			System.out.println("BluetoothTethering, onServiceDisconnected: BT Tethering is on");
-	            			//Toast.makeText(getApplicationContext(), "BT Tethering is on", Toast.LENGTH_LONG).show();
+//	            			Toast.makeText(getApplicationContext(), "BT Tethering is on", Toast.LENGTH_LONG).show();
 	            		}
 	            		else {
 	            			System.out.println("BluetoothTethering, onServiceDisconnected: BT Tethering is off");
-	                        //Toast.makeText(getApplicationContext(), "BT Tethering is off", Toast.LENGTH_LONG).show();
+//	                        Toast.makeText(getApplicationContext(), "BT Tethering is off", Toast.LENGTH_LONG).show();
 	            		}
 //	            	}
 	            }
