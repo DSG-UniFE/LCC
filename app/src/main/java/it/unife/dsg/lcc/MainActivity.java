@@ -9,9 +9,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -290,9 +287,9 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                 switch (pos) {
                     case 0:
                         if (roleBluetooth != LCCRole.CLIENT && bluetoothActivated.isChecked()) {
-                            mService.stopWifiThread();
+                            mService.stopBluetoothThread();
                             roleBluetooth = LCCRole.CLIENT;
-                            updateWifiStatus(bluetoothActivated.isChecked());
+                            updateBluetoothStatus(bluetoothActivated.isChecked());
                         } else {
                             roleBluetooth = LCCRole.CLIENT;
                         }
@@ -300,9 +297,9 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
 
                     case 1:
                         if (roleBluetooth != LCCRole.HOTSPOT && bluetoothActivated.isChecked()) {
-                            mService.stopWifiThread();
+                            mService.stopBluetoothThread();
                             roleBluetooth = LCCRole.HOTSPOT;
-                            updateWifiStatus(bluetoothActivated.isChecked());
+                            updateBluetoothStatus(bluetoothActivated.isChecked());
                         } else {
                             roleBluetooth = LCCRole.HOTSPOT;
                         }
@@ -310,9 +307,9 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
 
                     case 2:
                         if (roleBluetooth != LCCRole.CLIENT_HOTSPOT && bluetoothActivated.isChecked()) {
-                            mService.stopWifiThread();
+                            mService.stopBluetoothThread();
                             roleBluetooth = LCCRole.CLIENT_HOTSPOT;
-                            updateWifiStatus(bluetoothActivated.isChecked());
+                            updateBluetoothStatus(bluetoothActivated.isChecked());
                         } else {
                             roleBluetooth = LCCRole.CLIENT_HOTSPOT;
                         }
@@ -350,7 +347,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
     private void updateUI(int status) {
         switch (status) {
             case STATUS_READY_TO_START:
-                //Aggressiveness
+                // Aggressiveness
                 Spinner aggressiveness_spinner = (Spinner) findViewById(R.id.aggressiveness_spinner);
                 aggressiveness_spinner.setOnItemSelectedListener(this);
                 /*
@@ -363,14 +360,14 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                 */
                 aggressiveness_spinner.setSelection(1);
 
-                //Hotspot Wifi
+                // Hotspot Wifi
                 CheckBox wifiActivated = (CheckBox)findViewById(R.id.active_wifi);
                 wifiActivated.setOnCheckedChangeListener(this);
                 Spinner wifiSpinner = (Spinner) findViewById(R.id.wifi_spinner);
                 wifiSpinner.setOnItemSelectedListener(this);
                 wifiSpinner.setSelection(0);
 
-                //Hotspot Bluetooth
+                // Hotspot Bluetooth
                 CheckBox bluetoothActivated = (CheckBox)findViewById(R.id.active_bluetooth);
                 bluetoothActivated.setOnCheckedChangeListener(this);
                 Spinner bluetoothSpinner = (Spinner) findViewById(R.id.bluetooth_spinner);
@@ -701,7 +698,6 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
     private void updateWifiStatus(boolean isChecked) {
         if (mBound) {
             if (!mService.wifiThreadIsActive()) {
-                //lcc = LCC.getInstance(true, context, roleWifi, HotspotType.WIFI);
                 int rs = Integer.parseInt(((EditText) findViewById(R.id.changeRolePeriodValue)).getText().toString());
                 int hc = Integer.parseInt(((EditText) findViewById(R.id.changeHotspotPeriodValue)).getText().toString());
                 int maxtbh = Integer.parseInt(((EditText) findViewById(R.id.maxTimewaitToBeHotspotValue)).getText().toString());
@@ -717,7 +713,6 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
     private void updateBluetoothStatus(boolean isChecked) {
         if (mBound) {
             if (!mService.bluetoothThreadIsActive()) {
-                //lccBt = LCC.getInstance(true, context, roleBluetooth, HotspotType.BLUETOOTH);
                 int rs = Integer.parseInt(((EditText) findViewById(R.id.changeRolePeriodValue)).getText().toString());
                 int hc = Integer.parseInt(((EditText) findViewById(R.id.changeHotspotPeriodValue)).getText().toString());
                 int maxtbh = Integer.parseInt(((EditText) findViewById(R.id.maxTimewaitToBeHotspotValue)).getText().toString());
