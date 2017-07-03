@@ -61,6 +61,12 @@ public class WifiAccessManager {
             			//Thread.sleep(2500);
             		}
                     mWifiManager.startScan();
+
+                    // TODO
+                    /* Wrong method.
+                    Right method:
+                    https://stackoverflow.com/questions/18741034/how-to-get-available-wifi-networks-and-display-them-in-a-list-in-android
+                     */
                     Thread.sleep(3000);
 
             		List<ScanResult> wifiScanResultList = mWifiManager.getScanResults();
