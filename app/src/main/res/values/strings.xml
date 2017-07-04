@@ -19,6 +19,7 @@
     <string name="role">Role:</string>
     <string name="network_id">Network ID:</string>
     <string name="connected_to">Connected to:</string>
+    <string name="ip">IP:</string>
     <string name="none">none</string>
     <string-array name="aggressiveness_array">
         <item>Lazy</item>

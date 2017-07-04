@@ -270,6 +270,13 @@
             android:layout_marginTop="8dp" />
 
         <TextView
+            android:id="@+id/wifi_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="8dp" />
+
+        <TextView
             android:id="@+id/wifi_connect_to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -288,6 +295,13 @@
 
         <TextView
             android:id="@+id/bluetooth_role"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/bluetooth_ip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"

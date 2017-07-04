@@ -5,17 +5,30 @@ import android.app.PendingIntent;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
+import android.net.DhcpInfo;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.NotificationCompat;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 
 import it.unife.dsg.lcc.MainActivity;
 import it.unife.dsg.lcc.R;
@@ -709,11 +722,12 @@ public class LCC extends Thread {
             case BLUETOOTH:
                 System.out.println("LCC " + hotspotType.toString() + ": sendMessage() BLUETOOTH");
                 msg = uiHandler.obtainMessage(2);
+
+                info.put("bluetooth_ip", getBtApIpAddress());
                 switch (currentRole) {
                     case CLIENT:
                         System.out.println("LCC " + hotspotType.toString() + ": sendMessage() BLUETOOTH - CLIENT");
                         info.put("bluetooth_role", "client");
-                        info.put("bluetooth_connected_to", "none");
                         if (currentBtHotspot != null) {
                             System.out.println(("LCC " + hotspotType + ": sendMessage(), currentBtHotspot" + currentBtHotspot.getName()));
                             info.put("bluetooth_connected_to", currentBtHotspot.getName());
@@ -726,9 +740,12 @@ public class LCC extends Thread {
                     case HOTSPOT:
                         System.out.println("LCC " + hotspotType.toString() + ": sendMessage() BLUETOOTH - HOTSPOT");
                         info.put("bluetooth_role", "hotspot");
+                        info.put("bluetooth_connected_to", "none");
                         break;
+
                     default:
                         info.put("bluetooth_role", "none");
+                        info.put("bluetooth_ip", "NULL");
                         info.put("bluetooth_connected_to", "none");
                         break;
                 }
@@ -737,6 +754,8 @@ public class LCC extends Thread {
             case WIFI:
                 System.out.println("LCC " + hotspotType.toString() + ": sendMessage() WIFI");
                 msg = uiHandler.obtainMessage(1);
+
+                info.put("wifi_ip", getWifiApIpAddress());
                 switch (currentRole) {
                     case CLIENT:
                         System.out.println("LCC " + hotspotType.toString() + ": sendMessage() WIFI - CLIENT");
@@ -763,8 +782,10 @@ public class LCC extends Thread {
             default:
                 msg = uiHandler.obtainMessage(0);
                 info.put("wifi_role", "none");
+                info.put("wifi_ip", "none");
                 info.put("wifi_connected_to", "none");
                 info.put("bluetooth_role", "none");
+                info.put("bluetooth_ip", "none");
                 info.put("bluetooth_connected_to", "none");
                 break;
         }
@@ -773,16 +794,22 @@ public class LCC extends Thread {
             switch (hotspotType) {
                 case BLUETOOTH:
                     info.put("bluetooth_role", "none");
+                    info.put("bluetooth_ip", "none");
                     info.put("bluetooth_connected_to", "none");
                     break;
+
                 case WIFI:
                     info.put("wifi_role", "none");
+                    info.put("wifi_ip", "none");
                     info.put("wifi_connected_to", "none");
                     break;
+                
                 default:
                     info.put("wifi_role", "none");
+                    info.put("wifi_ip", "none");
                     info.put("wifi_connected_to", "none");
                     info.put("bluetooth_role", "none");
+                    info.put("bluetooth_ip", "none");
                     info.put("bluetooth_connected_to", "none");
                     break;
             }
@@ -793,4 +820,47 @@ public class LCC extends Thread {
         uiHandler.sendMessage(msg);
     }
 
+    private String getBtApIpAddress() {
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en
+                    .hasMoreElements();) {
+                NetworkInterface intf = en.nextElement();
+                if (intf.getName().contains("bt-pan")) {
+                    for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr
+                            .hasMoreElements();) {
+                        InetAddress inetAddress = enumIpAddr.nextElement();
+                        if (!inetAddress.isLoopbackAddress()
+                                && (inetAddress.getAddress().length == 4)) {
+                            return inetAddress.getHostAddress();
+                        }
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            ex.printStackTrace();
+        }
+        return "none";
+    }
+
+    private String getWifiApIpAddress() {
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en
+                    .hasMoreElements();) {
+                NetworkInterface intf = en.nextElement();
+                if (intf.getName().contains("wlan")) {
+                    for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr
+                            .hasMoreElements();) {
+                        InetAddress inetAddress = enumIpAddr.nextElement();
+                        if (!inetAddress.isLoopbackAddress()
+                                && (inetAddress.getAddress().length == 4)) {
+                            return inetAddress.getHostAddress();
+                        }
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            ex.printStackTrace();
+        }
+        return "none";
+    }
 }

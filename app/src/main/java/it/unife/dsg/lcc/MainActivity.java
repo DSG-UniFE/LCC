@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
     private Context context;
     private LCCRole roleWifi, roleBluetooth;
     private TextView networkIDTextView, updatedTextView;
-    private TextView wifiRoleTextView, wifiConnectedToTextView;
-    private TextView bluetoothRoleTextView, bluetoothConnectedToTextView;
+    private TextView wifiRoleTextView, wifiConnectedToTextView, wifiIpTextView;
+    private TextView bluetoothRoleTextView, bluetoothConnectedToTextView, bluetoothIpTextView;
 
     private final int STATUS_READY_TO_START = 0;
     private final int STATUS_DEFAULT_VALUES = 2;
@@ -117,6 +117,9 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                             wifiRoleTextView = (TextView) findViewById(R.id.wifi_role);
                             text = fromHtml("<b>" + getString(R.string.role) + "</b> " + info.get("wifi_role"));
                             wifiRoleTextView.setText(text);
+                            wifiIpTextView = (TextView) findViewById(R.id.wifi_ip);
+                            text = fromHtml("<b>" + getString(R.string.ip) + "</b> " + info.get("wifi_ip"));
+                            wifiIpTextView.setText(text);
                             wifiConnectedToTextView = (TextView) findViewById(R.id.wifi_connect_to);
                             text = fromHtml("<b>" + getString(R.string.connected_to) + "</b> " + info.get("wifi_connected_to"));
                             wifiConnectedToTextView.setText(text);
@@ -139,6 +142,9 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                             bluetoothRoleTextView = (TextView) findViewById(R.id.bluetooth_role);
                             text = fromHtml("<b>" + getString(R.string.role) + "</b> " + info.get("bluetooth_role"));
                             bluetoothRoleTextView.setText(text);
+                            bluetoothIpTextView = (TextView) findViewById(R.id.bluetooth_ip);
+                            text = fromHtml("<b>" + getString(R.string.ip) + "</b> " + info.get("bluetooth_ip"));
+                            bluetoothIpTextView.setText(text);
                             bluetoothConnectedToTextView = (TextView) findViewById(R.id.bluetooth_connect_to);
                             text = fromHtml("<b>" + getString(R.string.connected_to) + "</b> " + info.get("bluetooth_connected_to"));
                             bluetoothConnectedToTextView.setText(text);
@@ -160,6 +166,9 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                         wifiRoleTextView = (TextView) findViewById(R.id.wifi_role);
                         text = fromHtml("<b>" + getString(R.string.role) + "</b> NONE");
                         wifiRoleTextView.setText(text);
+                        wifiIpTextView = (TextView) findViewById(R.id.wifi_ip);
+                        text = fromHtml("<b>" + getString(R.string.ip) + "</b> NONE");
+                        wifiIpTextView.setText(text);
                         wifiConnectedToTextView = (TextView) findViewById(R.id.wifi_connect_to);
                         text = fromHtml("<b>" + getString(R.string.connected_to) + "</b> NONE");
                         wifiConnectedToTextView.setText(text);
@@ -167,6 +176,9 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                         bluetoothRoleTextView = (TextView) findViewById(R.id.bluetooth_role);
                         text = fromHtml("<b>" + getString(R.string.role) + "</b> NONE");
                         bluetoothRoleTextView.setText(text);
+                        bluetoothIpTextView = (TextView) findViewById(R.id.bluetooth_ip);
+                        text = fromHtml("<b>" + getString(R.string.ip) + "</b> NONE");
+                        bluetoothIpTextView.setText(text);
                         bluetoothConnectedToTextView = (TextView) findViewById(R.id.bluetooth_connect_to);
                         text = fromHtml("<b>" + getString(R.string.connected_to) + "</b> NONE");
                         bluetoothConnectedToTextView.setText(text);
@@ -179,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
 
         activeGPS();
 
-        // hide soft keyboard at activity start-up
+        // Hide soft keyboard at activity start-up
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
@@ -384,6 +396,9 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                 wifiRoleTextView = (TextView) findViewById(R.id.wifi_role);
                 text = fromHtml("<b>" + getString(R.string.role) + "</b> " + getString(R.string.none));
                 wifiRoleTextView.setText(text);
+                wifiIpTextView = (TextView) findViewById(R.id.wifi_ip);
+                text = fromHtml("<b>" + getString(R.string.ip) + "</b> " + getString(R.string.none));
+                wifiIpTextView.setText(text);
                 wifiConnectedToTextView = (TextView) findViewById(R.id.wifi_connect_to);
                 text = fromHtml("<b>" + getString(R.string.connected_to) + "</b> " + getString(R.string.none));
                 wifiConnectedToTextView.setText(text);
@@ -391,6 +406,9 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                 bluetoothRoleTextView = (TextView) findViewById(R.id.bluetooth_role);
                 text = fromHtml("<b>" + getString(R.string.role) + "</b> " + getString(R.string.none));
                 bluetoothRoleTextView.setText(text);
+                bluetoothIpTextView = (TextView) findViewById(R.id.bluetooth_ip);
+                text = fromHtml("<b>" + getString(R.string.ip) + "</b> " + getString(R.string.none));
+                bluetoothIpTextView.setText(text);
                 bluetoothConnectedToTextView = (TextView) findViewById(R.id.bluetooth_connect_to);
                 text = fromHtml("<b>" + getString(R.string.connected_to) + "</b> " + getString(R.string.none));
                 bluetoothConnectedToTextView.setText(text);
@@ -490,9 +508,11 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         String updatedText = getString(R.string.none);
 
         String wifiRoleText = getString(R.string.none);
+        String wifiIpText = getString(R.string.none);
         String wifiConnectedToText = getString(R.string.none);
 
         String bluetoothRoleText = getString(R.string.none);
+        String bluetoothIpText = getString(R.string.none);
         String bluetoothConnectedToText = getString(R.string.none);
 
         aggressiveness = settings.getInt("aggressiveness", aggressiveness);
@@ -510,9 +530,11 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         updatedText = settings.getString("updated_text", updatedText);
 
         wifiRoleText = settings.getString("wifi_role_text", wifiRoleText);
+        wifiIpText = settings.getString("wifi_ip", wifiIpText);
         wifiConnectedToText = settings.getString("wifi_connected_to_text", wifiConnectedToText);
 
         bluetoothRoleText = settings.getString("bluetooth_role_text", bluetoothRoleText);
+        bluetoothIpText = settings.getString("wifi_ip", bluetoothIpText);
         bluetoothConnectedToText = settings.getString("bluetooth_connected_to_text", bluetoothConnectedToText);
 
         ((Spinner) findViewById(R.id.aggressiveness_spinner)).setSelection(aggressiveness);
@@ -530,15 +552,19 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         networkIDTextView.setText(text);
         text = fromHtml("<b>" + getString(R.string.updated) + "</b> " + updatedText);
         updatedTextView.setText(text);
-        text = fromHtml("<b>" + getString(R.string.role) + "</b> " + wifiRoleText);
 
+        text = fromHtml("<b>" + getString(R.string.role) + "</b> " + wifiRoleText);
         wifiRoleTextView.setText(text);
-        text = fromHtml("<b>" + getString(R.string.role) + "</b> " + wifiConnectedToText);
+        text = fromHtml("<b>" + getString(R.string.ip) + "</b> " + wifiIpText);
+        wifiIpTextView.setText(text);
+        text = fromHtml("<b>" + getString(R.string.connected_to) + "</b> " + wifiConnectedToText);
         wifiConnectedToTextView.setText(text);
 
         text = fromHtml("<b>" + getString(R.string.role) + "</b> " + bluetoothRoleText);
         bluetoothRoleTextView.setText(text);
-        text = fromHtml("<b>" + getString(R.string.role) + "</b> " + bluetoothConnectedToText);
+        text = fromHtml("<b>" + getString(R.string.ip) + "</b> " + wifiIpText);
+        bluetoothIpTextView.setText(text);
+        text = fromHtml("<b>" + getString(R.string.connected_to) + "</b> " + bluetoothConnectedToText);
         bluetoothConnectedToTextView.setText(text);
     }
 
@@ -569,11 +595,15 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
 
         text = wifiRoleTextView.getText().toString().split(":", 2)[1].replaceAll("\\s+", "");
         String wifiRoleText = text;
+        text = wifiIpTextView.getText().toString().split(":", 2)[1].replaceAll("\\s+", "");
+        String wifiIpText = text;
         text = wifiConnectedToTextView.getText().toString().split(":", 2)[1].replaceAll("\\s+", "");
         String wifiConnectedText = text;
 
         text = bluetoothRoleTextView.getText().toString().split(":", 2)[1].replaceAll("\\s+", "");
         String bluetoothRoleText = text;
+        text = bluetoothIpTextView.getText().toString().split(":", 2)[1].replaceAll("\\s+", "");
+        String blutoothIpText = text;
         text = bluetoothConnectedToTextView.getText().toString().split(":", 2)[1].replaceAll("\\s+", "");
         String bluetoothConnectedText = text;
 
@@ -592,8 +622,11 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         editor.putString("updated_text", updatedText);
 
         editor.putString("wifi_role_text", wifiRoleText);
+        editor.putString("wifi_ip", wifiIpText);
         editor.putString("wifi_connected_to_text", wifiConnectedText);
+
         editor.putString("bluetooth_role_text", bluetoothRoleText);
+        editor.putString("bluetooth_ip", blutoothIpText);
         editor.putString("bluetooth_connected_to_text", bluetoothConnectedText);
 
 
@@ -876,11 +909,11 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
                         && perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                         && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     // All Permissions Granted
-                    Toast.makeText(MainActivity.this, "All permissions is allowed", Toast.LENGTH_SHORT)
+                    Toast.makeText(MainActivity.this, "All permissions are allowed", Toast.LENGTH_SHORT)
                             .show();
                 } else {
                     // Permission Denied
-                    Toast.makeText(MainActivity.this, "Some permission/s is denied", Toast.LENGTH_SHORT)
+                    Toast.makeText(MainActivity.this, "Some permissions are denied", Toast.LENGTH_SHORT)
                             .show();
                 }
             }
