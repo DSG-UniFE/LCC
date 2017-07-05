@@ -18,7 +18,6 @@ import it.unife.dsg.lcc.util.Utils;
 public class WifiAccessManager {
 
     public static boolean setWifiApState(Context context, String networkSSID, boolean enabled) {
-
         try {
             WifiManager mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             
@@ -37,8 +36,7 @@ public class WifiAccessManager {
         }
     }
 
-    public static ScanResult connectToWifiAp(Context context, String networkSSID, String excludeSSID)
-    {
+    public static ScanResult connectToWifiAp(Context context, String networkSSID, String excludeSSID) {
     	ScanResult result = null;
     	try {
             WifiManager mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -84,19 +82,9 @@ public class WifiAccessManager {
 							}
 						}
 
-
-                        // TEST
-                        if(wifiFilterList.size() > 0) {
-                            for (ScanResult wifiFilter : wifiFilterList)
-                                System.out.println("WifiAccessManager, network name: " + wifiFilter.SSID);
-                        } else {
-                            System.out.println("WifiAccessManager: NOT found networks with filters");
-                        }
-
-
 						int size = wifiFilterList.size();
 						if (size > 0) {
-							//Select new access point random
+							// Select new access point random
 							int n = Utils.nextRandomInt(size);
 							ScanResult newAccessPoint = wifiFilterList.get(n);
 
@@ -115,13 +103,8 @@ public class WifiAccessManager {
 //                        		mWifiManager.saveConfiguration();
 
             					boolean isDisconnected = mWifiManager.disconnect();
-            					System.out.println("WifiAccessManager isDisconnected: " + isDisconnected);
-
                					boolean isEnabled = mWifiManager.enableNetwork(netId, true);
-            					System.out.println("WifiAccessManager isEnabled: " + isEnabled);
-
             					boolean isReconnected = mWifiManager.reconnect();
-            					System.out.println("WifiAccessManager isReconnected: " + isReconnected);
 
             					if(isReconnected) {
             					    //mWifiManager.saveConfiguration();
@@ -164,8 +147,7 @@ public class WifiAccessManager {
 //            }
 //            
 //    	    return result;
-    	}
-    	catch (Exception e) {
+    	} catch (Exception e) {
             e.printStackTrace();
         }
     	
@@ -200,7 +182,7 @@ public class WifiAccessManager {
     
     private static WifiConfiguration getWifiApConfiguration(String networkSSID) {
         WifiConfiguration conf = new WifiConfiguration();
-        //String ssid = convertToQuotedString(networkSSID);
+        // String ssid = convertToQuotedString(networkSSID);
         // Please note the quotes. String should contain ssid in quotes
         conf.SSID = "\"" + networkSSID + "\"";
 

@@ -9,6 +9,7 @@ import java.util.Set;
 import android.content.Context;
 import it.unife.dsg.lcc.util.Utils;
 import android.bluetooth.*;
+import android.widget.Toast;
 
 /**
 *
@@ -127,18 +128,9 @@ public class BluetoothTethering {
        boolean result = false;
        try {
            if(mBluetoothAdapter != null) {
-               System.out.println("BluetoothTethering: name " + mBluetoothAdapter.getName() +
-                       ", address " + mBluetoothAdapter.getAddress());
                if (!mBluetoothAdapter.getName().equals(name)) {
-                   if (mBluetoothAdapter.setName(name))
-                       System.out.println("BluetoothTethering: changed name");
-                   else
-                       System.out.println("BluetoothTethering: IMPOSSIBLE changed name");
+                   mBluetoothAdapter.setName(name);
                    Thread.sleep(1000);
-                   System.out.println("BluetoothTethering: name " + mBluetoothAdapter.getName() +
-                           ", address " + mBluetoothAdapter.getAddress());
-               } else {
-                   System.out.println("BluetoothTethering: NOT changed name");
                }
                result = true;
            }
@@ -290,6 +282,7 @@ public class BluetoothTethering {
 
 	    @Override
 	    public void onServiceConnected(final int profile, final BluetoothProfile proxy) {
+            System.out.println("BTPanServiceListener, onServiceConnected()");
             this.proxy = proxy;
             
 	        try {
@@ -297,12 +290,12 @@ public class BluetoothTethering {
                     setBluetooth(true);
                     setTetheringOn.invoke(instance, true);
                     if ((Boolean)isTetheringOn.invoke(instance, null)) {
-                        System.out.println("BluetoothTethering, onServiceConnected: BT Tethering is on");
-//	            			Toast.makeText(getApplicationContext(), "BT Tethering is on", Toast.LENGTH_LONG).show();
+                        System.out.println("BTPanServiceListener, onServiceConnected: BT Tethering is on");
+                        Toast.makeText(context, "BT Tethering is on", Toast.LENGTH_LONG).show();
                     }
                     else {
-                        System.out.println("BluetoothTethering, onServiceConnected: BT Tethering is off");
-//	            			Toast.makeText(getApplicationContext(), "BT Tethering is off", Toast.LENGTH_LONG).show();
+                        System.out.println("BTPanServiceListener, onServiceConnected: BT Tethering is off");
+                        Toast.makeText(context, "BT Tethering is off", Toast.LENGTH_LONG).show();
                     }
 
 	            }
@@ -320,11 +313,11 @@ public class BluetoothTethering {
 //	            	if(!connectToHotspot) {
 	            		setTetheringOn.invoke(instance, false);
 	            		if ((Boolean)isTetheringOn.invoke(instance, null)) {
-	            			System.out.println("BluetoothTethering, onServiceDisconnected: BT Tethering is on");
+	            			System.out.println("BTPanServiceListener, onServiceDisconnected: BT Tethering is on");
 //	            			Toast.makeText(getApplicationContext(), "BT Tethering is on", Toast.LENGTH_LONG).show();
 	            		}
 	            		else {
-	            			System.out.println("BluetoothTethering, onServiceDisconnected: BT Tethering is off");
+	            			System.out.println("BTPanServiceListener, onServiceDisconnected: BT Tethering is off");
 //	                        Toast.makeText(getApplicationContext(), "BT Tethering is off", Toast.LENGTH_LONG).show();
 	            		}
 //	            	}

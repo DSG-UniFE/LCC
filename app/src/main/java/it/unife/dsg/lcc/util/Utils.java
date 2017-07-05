@@ -58,7 +58,7 @@ public class Utils {
     }
 
     public static String getDate(String format) {
-        // example "HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss"
+        // example "HH:mm:ss", "yyyy-MM-dd'T'HH:mm:ss" ecc...
 		SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.ITALY);
 		return dateFormat.format(new Date());
 	}

@@ -223,18 +223,10 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         final int id = buttonView.getId();
         switch (id) {
             case R.id.active_wifi:
-                System.out.println("LCCActivity: onCheckedChanged = R.id.aWifi " + isChecked);
-                Utils.appendLog("LCCActivity: onCheckedChanged = R.id.aWifi " + isChecked);
-
                 updateWifiStatus(isChecked);
                 break;
 
             case R.id.active_bluetooth:
-                System.out.println("LCCActivity: onCheckedChanged = R.id.active_bluetooth " +
-                        isChecked);
-                Utils.appendLog("LCCActivity: onCheckedChanged = R.id.active_bluetooth " +
-                        isChecked);
-
                 updateBluetoothStatus(isChecked);
                 break;
 
@@ -714,16 +706,6 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
             // Bind to LocalService
             Intent intent = new Intent(this, LCCService.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        }
-
-        // TODO solo per test
-        if (mBound) {
-            System.out.println("--->mService.wifiThreadIsActive(): " +
-                    mService.wifiThreadIsActive());
-            System.out.println("--->mService.bluetoothThreadIsActive(): " +
-                    mService.bluetoothThreadIsActive());
-        } else {
-            System.out.println("--->RAMO ELSE");
         }
     }
 
