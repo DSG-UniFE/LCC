@@ -309,11 +309,11 @@ public class LCC extends Thread {
             Utils.appendLog("LCC " + hotspotType + ": FINISHED");
         } catch (InterruptedException ie) {
             System.out.println("LCC " + hotspotType + ": InterruptedException");
-            sendIntentBroadcast(Constants.MESSAGE_LCC_DEACTIVATE);
         } catch (Exception e) {
             System.out.println("LCC " + hotspotType + " ERROR: Exceptions");
             e.printStackTrace();
         }
+
         sendIntentBroadcast(Constants.MESSAGE_LCC_DEACTIVATE);
         System.out.println("LCC " + hotspotType + ": END");
         Utils.appendLog("LCC " + hotspotType + ": END");
@@ -692,7 +692,6 @@ public class LCC extends Thread {
 
     private void sendIntentBroadcast(int message_id) {
         Intent intent = new Intent(Constants.LCC_INTENT_ACTION);
-//        intent.setAction(Constants.WIFIOPP_INTENT_ACTION);
         intent.putExtra("data", message_id);
         context.sendBroadcast(intent);
     }

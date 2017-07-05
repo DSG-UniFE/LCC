@@ -94,7 +94,7 @@ public class Utils {
     }
 
 	public static void appendLog(String text) {
-		File androidShareDirectory = new File(android.os.Environment.getExternalStorageDirectory() + "/wifiOpp");
+		File androidShareDirectory = new File(android.os.Environment.getExternalStorageDirectory() + "/lcc");
 		if(!androidShareDirectory.exists())
 			androidShareDirectory.mkdirs();
 
