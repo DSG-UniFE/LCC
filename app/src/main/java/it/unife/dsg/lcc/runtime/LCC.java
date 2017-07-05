@@ -10,11 +10,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -141,35 +136,23 @@ public class LCC extends Thread {
 
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        try {
-            boolean foundHotspotId = false;
-            String[] filenameLists = context.fileList();
-            for (String filename : filenameLists) {
-                if (filename.equals(Constants.HOTSPOT_ID)) {
-                    foundHotspotId = true;
-                    break;
-                }
+        boolean foundHotspotId = false;
+        String[] filenameLists = context.fileList();
+        for (String filename : filenameLists) {
+            if (filename.equals(Constants.HOTSPOT_ID)) {
+                foundHotspotId = true;
+                break;
             }
+        }
 
-            if (foundHotspotId) {
-                FileInputStream inputStream = context.openFileInput(Constants.HOTSPOT_ID);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                networkSSID = reader.readLine();
-                reader.close();
-                inputStream.close();
-                System.out.println("LCC " + hotspotType + ": letto file, networkSSID: " +
-                        networkSSID);
-            } else {
-                FileOutputStream fOut = context.openFileOutput(Constants.HOTSPOT_ID,
-                        Context.MODE_PRIVATE);
-                fOut.write(networkSSID.getBytes());
-                fOut.close();
-                System.out.println("LCC " + hotspotType + ": scritto file, networkSSID: " +
-                        networkSSID);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (foundHotspotId) {
+            networkSSID = Utils.readFirstLine(context, Constants.HOTSPOT_ID);
+            System.out.println("LCC " + hotspotType + ": letto file, networkSSID: " +
+                    networkSSID);
+        } else {
+            Utils.writeFile(context, networkSSID);
+            System.out.println("LCC " + hotspotType + ": scritto file, networkSSID: " +
+                    networkSSID);
         }
 
         this.start();
@@ -393,7 +376,7 @@ public class LCC extends Thread {
     }
 
     private boolean changeRole() {
-		boolean res = false;
+		boolean res;
 		Utils.appendLog("LCC " + hotspotType.toString() + ": " + "changeRole()");
         System.out.println("LCC " + hotspotType.toString() + ": " + "changeRole()");
 
@@ -737,7 +720,7 @@ public class LCC extends Thread {
         System.out.println("LCC " + hotspotType.toString() + ": sendMessage()");
         HashMap<String,String> info = new HashMap<String, String>();
         info.put("network_id", networkSSID);
-        info.put("updated", Utils.getDate());
+        info.put("updated", Utils.getDate("HH:mm:ss"));
 
         Message msg;
         switch (hotspotType) {
