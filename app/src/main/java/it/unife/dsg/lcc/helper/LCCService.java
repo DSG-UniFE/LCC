@@ -75,8 +75,6 @@ public class LCCService extends Service {
         return super.onUnbind(intent);
     }
 
-
-    /** method for clients */
     public boolean wifiThreadIsActive() {
         if (wifiThread == null)
             return false;
