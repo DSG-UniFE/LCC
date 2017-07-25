@@ -203,28 +203,62 @@ public class LCC extends Thread {
 
                     // Restart counter
                     currentTimeChangeRole = getChangeRolePeriod() * 1000;
+//                    currentTimeChangeHotspot = changeHotspotPeriod * 1000;
+                }
+
+                if (currentTimeChangeHotspot <= 0) {
+                    Utils.appendLog("LCC " + hotspotType.toString() + ": " +
+                            "Timeout changeHotspotPeriod");
+                    System.out.println("LCC " + hotspotType.toString() + ": " +
+                            "Timeout changeHotspotPeriod");
+                    if (getCurrentRole() == LCCRole.CLIENT)
+                        changeHotspot();
+
+                    // Restart counter
                     currentTimeChangeHotspot = changeHotspotPeriod * 1000;
+
                 } else {
-                    if (currentTimeChangeHotspot <= 0) {
-                        Utils.appendLog("LCC " + hotspotType.toString() + ": " +
-                                "Timeout changeHotspotPeriod");
-                        System.out.println("LCC " + hotspotType.toString() + ": " +
-                                "Timeout changeHotspotPeriod");
-                        if (getCurrentRole() == LCCRole.CLIENT)
-                            changeHotspot();
+                    // CLIENT: currentTimeChangeHotspot > 0 && currentTimeChangeRole > 0
+                    boolean notFound;
 
-                        // Restart counter
-                        currentTimeChangeHotspot = changeHotspotPeriod * 1000;
+                    switch (getRole()) {
+                        case CLIENT:
+                            //Check connection to hotspot
+                            notFound = checkHotspotConnection();
+                            //boolean notFound = setClient();
 
-                    } else {
-                        // CLIENT: currentTimeChangeHotspot > 0 && currentTimeChangeRole > 0
-                        boolean notFound;
+                            if (notFound) {
+                                Utils.appendLog("LCC " + hotspotType.toString() + ": " +
+                                        "checkHotspotConnection() not found connection!");
+                                System.out.println("LCC " + hotspotType.toString() + ": " +
+                                        "checkHotspotConnection() not found connection!");
 
-                        switch (getRole()) {
-                            case CLIENT:
-                                //Check connection to hotspot
+                                // After a random time retry
+                                int randomTime = Utils.nextRandomInt(maxTimeWaitToBecomeHotspot);
+
+                                Utils.appendLog("LCC " + hotspotType.toString() + ": wait " +
+                                        randomTime + " seconds before retry...");
+                                System.out.println("LCC " + hotspotType.toString() + ": wait " +
+                                        randomTime + " seconds before retry...");
+
+                                Thread.sleep(randomTime * 1000);
+
+                                // First new checkHotspotConnection
                                 notFound = checkHotspotConnection();
-                                //boolean notFound = setClient();
+                                if (!notFound) {
+                                    boolean changedHotspot = changeHotspot();
+                                    if (changedHotspot)
+                                        // Restart counter
+                                        currentTimeChangeHotspot = changeHotspotPeriod * 1000;
+                                }
+                            }
+                            break;
+
+                        case CLIENT_HOTSPOT:
+                            if (getCurrentRole() == LCCRole.CLIENT) {
+                                // Check connection to hotspot
+                                notFound = checkHotspotConnection();
+//                                    boolean notFound = setClient();
 
                                 if (notFound) {
                                     Utils.appendLog("LCC " + hotspotType.toString() + ": " +
@@ -232,64 +266,30 @@ public class LCC extends Thread {
                                     System.out.println("LCC " + hotspotType.toString() + ": " +
                                             "checkHotspotConnection() not found connection!");
 
-                                    // After a random time retry
+                                    // After a random time changeRole to become hotspot
                                     int randomTime = Utils.nextRandomInt(maxTimeWaitToBecomeHotspot);
 
-                                    Utils.appendLog("LCC " + hotspotType.toString() + ": wait " +
-                                            randomTime + " seconds before retry...");
-                                    System.out.println("LCC " + hotspotType.toString() + ": wait " +
-                                            randomTime + " seconds before retry...");
+                                    Utils.appendLog("LCC " + hotspotType.toString() + ": " +
+                                            "wait " + randomTime +
+                                            " seconds before change role...");
+                                    System.out.println("LCC " + hotspotType.toString() + ": " +
+                                            "wait " + randomTime +
+                                            " seconds before change role...");
 
                                     Thread.sleep(randomTime * 1000);
 
-                                    // First new checkHotspotConnection
-                                    notFound = checkHotspotConnection();
-                                    if (!notFound) {
-                                        boolean changedHotspot = changeHotspot();
-                                        if (changedHotspot)
-                                            // Restart counter
-                                            currentTimeChangeHotspot = changeHotspotPeriod * 1000;
-                                    }
-                                }
-                                break;
-
-                            case CLIENT_HOTSPOT:
-                                if (getCurrentRole() == LCCRole.CLIENT) {
-                                    // Check connection to hotspot
-                                    notFound = checkHotspotConnection();
-//                                    boolean notFound = setClient();
-
+                                    notFound = checkHotspotConnection(); // First new checkHotspotConnection!
                                     if (notFound) {
-                                        Utils.appendLog("LCC " + hotspotType.toString() + ": " +
-                                                "checkHotspotConnection() not found connection!");
-                                        System.out.println("LCC " + hotspotType.toString() + ": " +
-                                                "checkHotspotConnection() not found connection!");
-
-                                        // After a random time changeRole to become hotspot
-                                        int randomTime = Utils.nextRandomInt(maxTimeWaitToBecomeHotspot);
-
-                                        Utils.appendLog("LCC " + hotspotType.toString() + ": " +
-                                                "wait " + randomTime +
-                                                " seconds before change role...");
-                                        System.out.println("LCC " + hotspotType.toString() + ": " +
-                                                "wait " + randomTime +
-                                                " seconds before change role...");
-
-                                        Thread.sleep(randomTime * 1000);
-
-                                        notFound = checkHotspotConnection(); // First new checkHotspotConnection!
-                                        if (notFound) {
-                                            boolean changedRole = changeRole();
-                                            if (changedRole)
-                                                currentTimeChangeRole = changeRolePeriod * 1000; // Restart counter
-                                        }
+                                        boolean changedRole = changeRole();
+                                        if (changedRole)
+                                            currentTimeChangeRole = changeRolePeriod * 1000; // Restart counter
                                     }
                                 }
-                                break;
+                            }
+                            break;
 
-                            default:
-                                break;
-                        }
+                        default:
+                            break;
                     }
                 }
 
@@ -336,16 +336,14 @@ public class LCC extends Thread {
 //				notFound = currentWifiHotspot == null;
 //			}
 
-        } else {
-            if (getHotspotType() == HotspotType.BLUETOOTH) {
-                if (currentBtHotspot == null) {
-                    if (bt == null)
-                        bt = new BluetoothTethering(context);
+        } else if (getHotspotType() == HotspotType.BLUETOOTH) {
+            if (currentBtHotspot == null) {
+                if (bt == null)
+                    bt = new BluetoothTethering(context);
 
-                    // No connected to hotspot BLUETOOTH
-                    currentBtHotspot = bt.startConnection(prefixNetworkSSID, "");
-                    notFound = currentBtHotspot == null;
-                }
+                // No connected to hotspot BLUETOOTH
+                currentBtHotspot = bt.startConnection(prefixNetworkSSID, "");
+                notFound = currentBtHotspot == null;
             }
         }
         return notFound;
@@ -483,39 +481,27 @@ public class LCC extends Thread {
         if (getCurrentRole() == LCCRole.CLIENT) {
             // Client no change role, but can change hotspot
             if (getHotspotType() == HotspotType.WIFI) {
-                ScanResult result = WifiAccessManager.connectToWifiAp(context, prefixNetworkSSID, "");
+                ScanResult result = null;
 
-                // Test if i lost connection
-                if (result == null) {
-                    currentWifiHotspot = null;
-                    Utils.appendLog("LCC " + hotspotType.toString() + ": " +
-                            "Lost connection! No hotspots found...");
-                    System.out.println("LCC " + hotspotType.toString() + ": " +
-                            "Lost connection! No hotspots found...");
-                }
-
-                if (result != null && currentWifiHotspot != null &&
-                        result.SSID.equals(currentWifiHotspot.SSID)) {
-                    // I'm connect to the same hotspot wifi. Try to connect to a different hotspot
-                    result = WifiAccessManager.connectToWifiAp(context, prefixNetworkSSID,
+                // I'm connect to the same hotspot wifi. Try to connect to a different hotspot
+                result = WifiAccessManager.connectToWifiAp(context, prefixNetworkSSID,
+                        currentWifiHotspot.SSID);
+                if (result != null) {
+                    //Ok, client change hotspot
+                    currentWifiHotspot = result;
+                    res = true;
+                    Utils.appendLog("LCC " + hotspotType.toString() + ": change hotspot " +
+                            hotspotType.toString() + ", connected to " +
                             currentWifiHotspot.SSID);
-                    if (result != null) {
-                        //Ok, client change hotspot
-                        currentWifiHotspot = result;
-                        res = true;
-                        Utils.appendLog("LCC " + hotspotType.toString() + ": change hotspot " +
-                                hotspotType.toString() + ", connected to " +
-                                currentWifiHotspot.SSID);
-                        System.out.println("LCC " + hotspotType.toString() + ": change hotspot " +
-                                hotspotType.toString() + ", connected to " +
-                                currentWifiHotspot.SSID);
-                    } else {
-                        //else, connected to the same hotspot
-                        Utils.appendLog("LCC " + hotspotType.toString() + ": " +
-                                "connected to the same hotspot " + hotspotType.toString());
-                        System.out.println("LCC " + hotspotType.toString() + ": " +
-                                "connected to the same hotspot " + hotspotType.toString());
-                    }
+                    System.out.println("LCC " + hotspotType.toString() + ": change hotspot " +
+                            hotspotType.toString() + ", connected to " +
+                            currentWifiHotspot.SSID);
+                } else {
+                    //else, connected to the same hotspot
+                    Utils.appendLog("LCC " + hotspotType.toString() + ": " +
+                            "connected to the same hotspot " + hotspotType.toString());
+                    System.out.println("LCC " + hotspotType.toString() + ": " +
+                            "connected to the same hotspot " + hotspotType.toString());
                 }
 
 //				// Test if i lost connection
@@ -697,7 +683,7 @@ public class LCC extends Thread {
     }
 
     private void sendMessage(boolean deactivate) {
-        System.out.println("LCC " + hotspotType.toString() + ": sendMessage()");
+//        System.out.println("LCC " + hotspotType.toString() + ": sendMessage()");
         HashMap<String,String> info = new HashMap<String, String>();
         info.put("network_id", networkSSID);
         info.put("updated", Utils.getDate("HH:mm:ss"));

@@ -31,14 +31,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-
-import it.unife.dsg.lcc.helper.LCCService;
-import it.unife.dsg.lcc.runtime.LCC.LCCRole;
-import it.unife.dsg.lcc.util.Constants;
-import it.unife.dsg.lcc.util.Utils;
-
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +41,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import it.unife.dsg.lcc.helper.LCCService;
+import it.unife.dsg.lcc.runtime.LCC.LCCRole;
+import it.unife.dsg.lcc.util.Constants;
 
 
 public class MainActivity extends AppCompatActivity implements OnCheckedChangeListener, OnItemSelectedListener {
@@ -554,7 +552,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         wifiConnectedToText = settings.getString("wifi_connected_to_text", wifiConnectedToText);
 
         bluetoothRoleText = settings.getString("bluetooth_role_text", bluetoothRoleText);
-        bluetoothIpText = settings.getString("wifi_ip", bluetoothIpText);
+        bluetoothIpText = settings.getString("bluetooth_ip", bluetoothIpText);
         bluetoothConnectedToText = settings.getString("bluetooth_connected_to_text", bluetoothConnectedToText);
 
         ((Spinner) findViewById(R.id.aggressiveness_spinner)).setSelection(aggressiveness);
@@ -824,7 +822,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             // We've bound to LCCService, cast the IBinder and get LCCService instance
-            System.out.println("MainActivity: onServiceConnected");
+            System.out.println("MainActivity: onServiceConnected()");
             LCCService.LCCBinder binder = (LCCService.LCCBinder) service;
             mService = binder.getService();
             mBound = true;

@@ -38,7 +38,7 @@
             android:name="it.unife.dsg.lcc.helper.LCCService"
             android:exported="false" >
             <intent-filter>
-                <action android:name="iit.unife.dsg.lcc.helper.LCCService" />
+                <action android:name="it.unife.dsg.lcc.helper.LCCService" />
             </intent-filter>
         </service>
     </application>

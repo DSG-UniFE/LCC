@@ -93,18 +93,18 @@ public class Utils {
         return false;
     }
 
-	public static void appendLog(String text) {
+	public static synchronized void appendLog(String text) {
 		File androidShareDirectory = new File(android.os.Environment.getExternalStorageDirectory() + "/lcc");
 		if(!androidShareDirectory.exists())
 			androidShareDirectory.mkdirs();
 
-		String logDirectory = androidShareDirectory.getAbsolutePath() + "/log";
+		String logDirectory = androidShareDirectory.getAbsolutePath() + "/logs";
 	    File dir = new File(logDirectory);
 		if(!dir.exists())
 			dir.mkdir();
-	    
-	    File logFile = new File(logDirectory+ "/log.txt"); 
-	    
+
+	    File logFile = new File(logDirectory+ "/log.txt");
+
 	    if (!logFile.exists()) {
 			try {
 	          logFile.createNewFile();
@@ -115,11 +115,11 @@ public class Utils {
 
 	    try {
 	       // BufferedWriter for performance, true to set append to file flag
-	       BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true)); 
-	       
+	       BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+
 	       Date date=new Date(System.currentTimeMillis());
    		   String log = getDate("yyyy-MM-dd'T'HH:mm:ss") + ": " + text;
-   		
+
 	       buf.append(log);
 	       buf.newLine();
 	       buf.close();
