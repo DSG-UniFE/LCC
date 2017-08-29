@@ -21,4 +21,9 @@ public class Constants {
 
     public static final String LCC_INTENT_ACTION = "it.unife.dsg.ramp_android.action.LCC";
 
+    public static final int LCC_NOTIFICATION_ID = 3;
+    public static final int WIFI_NOTIFICATION_ID = 4;
+    public static final int BLUETOOTH_NOTIFICATION_ID = 5;
+
+    public static final String HOTSPOT_ID = "HOTSPOT_ID";
 }

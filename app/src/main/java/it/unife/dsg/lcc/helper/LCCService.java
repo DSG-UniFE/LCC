@@ -4,8 +4,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import it.unife.dsg.lcc.runtime.LCC;
 
@@ -31,7 +31,7 @@ public class LCCService extends Service {
 
     @Override
     public void onCreate() {
-        System.out.println("LCCService: onCreate");
+        System.out.println("LCCService: onCreate()");
         // Start up the thread running the service.  Note that we create a
         // separate thread because the service normally runs in the process's
         // main thread, which we don't want to block.  We also make it
@@ -41,8 +41,8 @@ public class LCCService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        System.out.println("LCCService: onStartCommand");
-        //Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
+        System.out.println("LCCService: onStartCommand()");
+        // Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
 
         // If we get killed, after returning from here, restart
         return START_STICKY;
@@ -50,33 +50,31 @@ public class LCCService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        System.out.println("LCCService: onBind");
+        System.out.println("LCCService: onBind()");
         return mBinder;
     }
 
     @Override
     public void onRebind(Intent intent) {
-        System.out.println("LCCService: onRebind");
+        System.out.println("LCCService: onRebind()");
         super.onRebind(intent);
     }
 
     @Override
     public void onDestroy() {
-        System.out.println("LCCService: onDestroy");
+        System.out.println("LCCService: onDestroy()");
         super.onDestroy();
         stopWifiThread();
         stopBluetoothThread();
-        //Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        System.out.println("LCCService: onUnbind");
+        System.out.println("LCCService: onUnbind()");
         return super.onUnbind(intent);
     }
 
-
-    /** method for clients */
     public boolean wifiThreadIsActive() {
         if (wifiThread == null)
             return false;
@@ -93,10 +91,10 @@ public class LCCService extends Service {
     }
 
     public void startWifiThread(Context context, LCC.LCCRole role, int rs, int hc,
-                                int maxTimewaitToBecomeHotspot) {
+                                int maxTimewaitToBecomeHotspot, Handler uiHandler) {
         if (wifiThread == null) {
             wifiThread = new LCC(context, role, LCC.HotspotType.WIFI, rs, hc,
-                    maxTimewaitToBecomeHotspot);
+                    maxTimewaitToBecomeHotspot, uiHandler);
         }
     }
 
@@ -109,10 +107,10 @@ public class LCCService extends Service {
     }
 
     public void startBluetoothThread(Context context, LCC.LCCRole role, int rs, int hc,
-                                     int maxTimewaitToBecomeHotspot) {
+                                     int maxTimewaitToBecomeHotspot, Handler uiHandler) {
         if (bluetoothThread == null) {
             bluetoothThread = new LCC(context, role, LCC.HotspotType.BLUETOOTH, rs, hc,
-                    maxTimewaitToBecomeHotspot);
+                    maxTimewaitToBecomeHotspot, uiHandler);
         }
     }
 
