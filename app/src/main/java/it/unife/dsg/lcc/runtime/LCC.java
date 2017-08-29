@@ -156,8 +156,8 @@ public class LCC extends Thread {
 
     @Override
     public void run() {
-        System.out.println("LCC " + hotspotType + ": START: run() " + currentRole.toString());
-        Utils.appendLog("LCC " + hotspotType + " START: run() " + currentRole.toString());
+        System.out.println("LCC " + hotspotType + ": START run() " + currentRole.toString());
+        Utils.appendLog("LCC " + hotspotType + " START run() " + currentRole.toString());
         try {
             showNotification();
             sendIntentBroadcast(Constants.MESSAGE_LCC_ACTIVATE);
@@ -626,7 +626,7 @@ public class LCC extends Thread {
      * Show a notification while thread is running.
      */
     private void showNotification() {
-        System.out.println("LCC " + hotspotType + ": showNotification()");
+//        System.out.println("LCC " + hotspotType + ": showNotification()");
         // The PendingIntent to launch our activity if the user selects this notification
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), 0);
@@ -660,7 +660,7 @@ public class LCC extends Thread {
 
 
     private void removeNotification() {
-        System.out.println("LCC " + hotspotType + ": removeNotification()");
+//        System.out.println("LCC " + hotspotType + ": removeNotification()");
         switch (hotspotType) {
 			case WIFI:
                 notificationManager.cancel(WIFI_ACTIVE_NOTIFICATION_ID);
@@ -696,8 +696,8 @@ public class LCC extends Thread {
                 info.put("bluetooth_ip", getBtApIpAddress());
                 switch (currentRole) {
                     case CLIENT:
-                        System.out.println("LCC " + hotspotType.toString() +
-                                ": sendMessage() BLUETOOTH - CLIENT");
+//                        System.out.println("LCC " + hotspotType.toString() +
+//                                ": sendMessage() BLUETOOTH - CLIENT");
                         info.put("bluetooth_role", "client");
                         if (currentBtHotspot != null) {
                             info.put("bluetooth_connected_to", currentBtHotspot.getName());

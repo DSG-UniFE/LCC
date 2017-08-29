@@ -13,6 +13,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import it.unife.dsg.lcc.util.Utils;
 
@@ -45,7 +46,7 @@ public class WifiAccessManager {
     }
 
     public static ScanResult connectToWifiAp(Context context, String networkSSID, String excludeSSID) {
-        System.out.println("WifiAccessManager, networkSSID:  '" + networkSSID + "',  excludeSSID: '" + excludeSSID + "'");
+//        System.out.println("WifiAccessManager, networkSSID:  '" + networkSSID + "',  excludeSSID: '" + excludeSSID + "'");
     	ScanResult result = null;
     	try {
             WifiManager mWifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -53,6 +54,8 @@ public class WifiAccessManager {
             if (mWifiManager == null) {
                 // Device does not support Wi-Fi
             	System.out.println("WifiAccessManager:  Ops, your device does not support Wi-Fi");
+                Toast.makeText(context, "Ops, your device does not support Wi-Fi",
+                        Toast.LENGTH_LONG).show();
             } else {
 //            	if (connect) {
 					if (!mWifiManager.isWifiEnabled()) {
@@ -97,7 +100,7 @@ public class WifiAccessManager {
 							// Select new access point random
 							int n = Utils.nextRandomInt(size);
 							ScanResult newAccessPoint = wifiFilterList.get(n);
-                            
+
 //            			    for (i = 0; i < wifiScanResultList.size(); i++) {
 //            				    ScanResult accessPoint = wifiScanResultList.get(i);
 //            				    String currentSSID = accessPoint.SSID;
@@ -120,7 +123,7 @@ public class WifiAccessManager {
             					if(isReconnected) {
             					    //mWifiManager.saveConfiguration();
             						result = newAccessPoint;
-                                    System.out.println("WifiAccessManager.connectToWifiAp result: " + newAccessPoint.SSID);
+//                                    System.out.println("WifiAccessManager.connectToWifiAp result: " + newAccessPoint.SSID);
 //            						break;
             					}
 //            				}
@@ -240,7 +243,7 @@ public class WifiAccessManager {
             networkId = getExistingNetworkId(context, SSID);
 
             if (networkId == -1) {
-                System.out.println("WifiAccessManager.enableNetwork couldn't add network with SSID: " + SSID);
+//                System.out.println("WifiAccessManager.enableNetwork couldn't add network with SSID: " + SSID);
                 return false;
             }
         }

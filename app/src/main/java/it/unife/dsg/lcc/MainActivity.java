@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        System.out.println("MainActivity: onCreate");
+        System.out.println("MainActivity: onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -507,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
 
 
     private void restoreActivityState(){
-    	System.out.println("MainActivity: restoreActivityState");
+    	System.out.println("MainActivity: restoreActivityState()");
 		// Use shared preferences to restore the activity state
 		SharedPreferences settings = getPreferences(MODE_PRIVATE);
 
@@ -589,7 +589,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
 
 
     private void saveActivityState(){
-		System.out.println("MainActivity: saveActivityState");
+		System.out.println("MainActivity: saveActivityState()");
 		// Use shared preferences to save the activity state
 		SharedPreferences settings = getPreferences(MODE_PRIVATE);
 		SharedPreferences.Editor editor = settings.edit();
@@ -694,7 +694,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
 
     @Override
     protected void onStart() {
-        System.out.println("MainActivity: onStart");
+        System.out.println("MainActivity: onStart()");
         super.onStart();
 
         writeSettingsPermission(this);
@@ -709,27 +709,27 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
 
     @Override
     protected void onPause() {
-        System.out.println("MainActivity: onPause");
+        System.out.println("MainActivity: onPause()");
         super.onPause();
         saveActivityState();
     }
 
     @Override
     protected void onRestart() {
-        System.out.println("MainActivity: onRestart");
+        System.out.println("MainActivity: onRestart()");
         super.onRestart();
     }
 
     @Override
     protected void onResume() {
-        System.out.println("MainActivity: onResume");
+        System.out.println("MainActivity: onResume()");
         super.onResume();
         restoreActivityState();
     }
 
     @Override
     protected void onStop() {
-        System.out.println("MainActivity: onStop");
+        System.out.println("MainActivity: onStop()");
         super.onStop();
 
         // Unbind from the service
@@ -832,7 +832,7 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         public void onServiceDisconnected(ComponentName className) {
             // This is called when the connection with the service has been
             // unexpectedly disconnected -- that is, its process crashed.
-            System.out.println("MainActivity: onServiceDisconnected");
+            System.out.println("MainActivity: onServiceDisconnected()");
             updateUI(STATUS_DEFAULT_VALUES);
             mService = null;
             mBound = false;
