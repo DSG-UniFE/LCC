@@ -70,6 +70,31 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
 
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 135;
 
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LCCService, cast the IBinder and get LCCService instance
+            System.out.println("MainActivity: onServiceConnected()");
+            LCCService.LCCBinder binder = (LCCService.LCCBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            // This is called when the connection with the service has been
+            // unexpectedly disconnected -- that is, its process crashed.
+            System.out.println("MainActivity: onServiceDisconnected()");
+            updateUI(STATUS_DEFAULT_VALUES);
+            mService = null;
+            mBound = false;
+        }
+    };
+
 
     /**
      * Called when the activity is first created.
@@ -813,31 +838,6 @@ public class MainActivity extends AppCompatActivity implements OnCheckedChangeLi
         }
         return result;
     }
-
-    /**
-     * Defines callbacks for service binding, passed to bindService()
-     */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            // We've bound to LCCService, cast the IBinder and get LCCService instance
-            System.out.println("MainActivity: onServiceConnected()");
-            LCCService.LCCBinder binder = (LCCService.LCCBinder) service;
-            mService = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-            // This is called when the connection with the service has been
-            // unexpectedly disconnected -- that is, its process crashed.
-            System.out.println("MainActivity: onServiceDisconnected()");
-            updateUI(STATUS_DEFAULT_VALUES);
-            mService = null;
-            mBound = false;
-        }
-    };
 
     private static void writeSettingsPermission(Activity context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
